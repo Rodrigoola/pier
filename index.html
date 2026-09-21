@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Píer Completo - Eixos Assimétricos</title>
+    <title>Projeção de Cintamento sobre Pilares Existentes</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background: #0f172a; color: #f8fafc; padding: 20px; }
-        h1 { text-align: center; font-size: 22px; color: #38bdf8; margin-bottom: 20px; }
+        h1 { text-align: center; font-size: 22px; color: #38bdf8; margin-bottom: 5px; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
         .container { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
         .panel-title { font-size: 14px; font-weight: bold; color: #38bdf8; text-transform: uppercase; margin-bottom: 10px; grid-column: 1 / -1; border-bottom: 1px solid #334155; padding-bottom: 5px; }
         .controls { background: #1e293b; padding: 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
         .group { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+        .group.highlight { border-color: #38bdf8; background: #1e293b; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 4px; }
         input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
         .canvas-card { background: #1e293b; padding: 20px; border-radius: 12px; text-align: center; overflow-x: auto; }
         canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: block; margin: 0 auto; }
         
-        /* Estilos dos Botões de Ação */
         .action-panel { background: #1e293b; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
         .btn { padding: 12px 20px; font-weight: bold; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; flex: 1; min-width: 200px; }
@@ -30,13 +31,17 @@
     </style>
 </head>
 <body>
-    <h1>Simulador Estrutural de Píer - Locação de Pilares (P1 a P12)</h1>
+    <h1>Simulador de Cintamento sobre Pilares Existentes</h1>
+    <p class="subtitle">Pilares imutáveis no mar (Referência $P_1$) + Fôrma Retangular do Cintamento Ajustável</p>
+    
     <div class="container">
         <div class="controls">
-            <div class="panel-title">Largura Total da Estrutura Retangular</div>
-            <div class="group"><label>Largura Total (m): <span id="v_w">4.40</span></label><input type="range" id="w" min="3.80" max="6.00" step="0.05" value="4.40" oninput="draw()"></div>
+            <div class="panel-title">1. Geometria da Fôrma do Cintamento (Viga Superior Retangular)</div>
+            <div class="group highlight"><label>Largura Total do Cintamento (W) (m): <span id="v_w">4.40</span></label><input type="range" id="w" min="3.50" max="6.00" step="0.05" value="4.40" oninput="draw()"></div>
+            <div class="group highlight"><label>Posição Lateral da Fôrma (Referência BE1) (m): <span id="v_be1">0.25</span></label><input type="range" id="be1" min="-1.50" max="1.50" step="0.01" value="0.25" oninput="draw()"></div>
+            <div class="group highlight"><label>Avanço da Fôrma sobre Costão (Y0) (m): <span id="v_y0">0.50</span></label><input type="range" id="y0" min="0.00" max="2.00" step="0.05" value="0.50" oninput="draw()"></div>
 
-            <div class="panel-title">Vãos Transversais (T1 a T6)</div>
+            <div class="panel-title">2. Vãos Transversais Reais entre Pilares Medidos no Mar (T1 a T6)</div>
             <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="2.5" max="5.0" step="0.01" value="3.90" oninput="draw()"></div>
             <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.83</span></label><input type="range" id="t2" min="2.5" max="5.0" step="0.01" value="3.83" oninput="draw()"></div>
             <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.84</span></label><input type="range" id="t3" min="2.5" max="5.0" step="0.01" value="3.84" oninput="draw()"></div>
@@ -44,22 +49,14 @@
             <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">3.95</span></label><input type="range" id="t5" min="2.5" max="5.0" step="0.01" value="3.95" oninput="draw()"></div>
             <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">3.87</span></label><input type="range" id="t6" min="2.5" max="5.0" step="0.01" value="3.87" oninput="draw()"></div>
 
-            <div class="panel-title">Beirais Esquerdos (BE1 a BE6) — Permite Negativos</div>
-            <div class="group"><label>BE1 (m): <span id="v_be1">0.10</span></label><input type="range" id="be1" min="-2.00" max="2.00" step="0.01" value="0.10" oninput="draw()"></div>
-            <div class="group"><label>BE2 (m): <span id="v_be2">0.25</span></label><input type="range" id="be2" min="-2.00" max="2.00" step="0.01" value="0.25" oninput="draw()"></div>
-            <div class="group"><label>BE3 (m): <span id="v_be3">0.25</span></label><input type="range" id="be3" min="-2.00" max="2.00" step="0.01" value="0.25" oninput="draw()"></div>
-            <div class="group"><label>BE4 (m): <span id="v_be4">0.31</span></label><input type="range" id="be4" min="-2.00" max="2.00" step="0.01" value="0.31" oninput="draw()"></div>
-            <div class="group"><label>BE5 (m): <span id="v_be5">0.23</span></label><input type="range" id="be5" min="-2.00" max="2.00" step="0.01" value="0.23" oninput="draw()"></div>
-            <div class="group"><label>BE6 (m): <span id="v_be6">0.27</span></label><input type="range" id="be6" min="-2.00" max="2.00" step="0.01" value="0.27" oninput="draw()"></div>
-
-            <div class="panel-title">Vãos Longitudinais ESQUERDOS (L1 a L5 - Pilares Ímpares)</div>
+            <div class="panel-title">3. Vãos Longitudinais ESQUERDOS Medidos no Mar (L1 a L5 - P1→P11)</div>
             <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="1.5" max="5.0" step="0.05" value="3.65" oninput="draw()"></div>
             <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.80</span></label><input type="range" id="l2" min="1.5" max="5.0" step="0.05" value="2.80" oninput="draw()"></div>
             <div class="group"><label>L3 (P5→P7) (m): <span id="v_l3">3.00</span></label><input type="range" id="l3" min="1.5" max="5.0" step="0.05" value="3.00" oninput="draw()"></div>
             <div class="group"><label>L4 (P7→P9) (m): <span id="v_l4">3.80</span></label><input type="range" id="l4" min="1.5" max="5.0" step="0.05" value="3.80" oninput="draw()"></div>
             <div class="group"><label>L5 (P9→P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="1.5" max="5.0" step="0.05" value="3.90" oninput="draw()"></div>
 
-            <div class="panel-title">Vãos Longitudinais DIREITOS (R1 a R5 - Pilares Pares)</div>
+            <div class="panel-title">4. Vãos Longitudinais DIREITOS Medidos no Mar (R1 a R5 - P2→P12)</div>
             <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.65</span></label><input type="range" id="r1" min="1.5" max="5.0" step="0.05" value="3.65" oninput="draw()"></div>
             <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">2.80</span></label><input type="range" id="r2" min="1.5" max="5.0" step="0.05" value="2.80" oninput="draw()"></div>
             <div class="group"><label>R3 (P6→P8) (m): <span id="v_r3">3.00</span></label><input type="range" id="r3" min="1.5" max="5.0" step="0.05" value="3.00" oninput="draw()"></div>
@@ -67,7 +64,6 @@
             <div class="group"><label>R5 (P10→P12) (m): <span id="v_r5">3.90</span></label><input type="range" id="r5" min="1.5" max="5.0" step="0.05" value="3.90" oninput="draw()"></div>
         </div>
 
-        <!-- PAINEL DE BOTÕES DE AÇÃO E EXPORTAÇÃO -->
         <div class="action-panel">
             <div class="panel-title">Exportar / Importar Medidas para WhatsApp</div>
             <div class="btn-group">
@@ -91,14 +87,17 @@
             const ctx = canvas.getContext('2d');
 
             const W = parseFloat(document.getElementById('w').value);
-            document.getElementById('v_w').innerText = W.toFixed(2);
+            const BE1_ref = parseFloat(document.getElementById('be1').value);
+            const Y0_ref = parseFloat(document.getElementById('y0').value);
 
-            const T = []; const BE = []; const L = []; const R = [];
+            document.getElementById('v_w').innerText = W.toFixed(2);
+            document.getElementById('v_be1').innerText = BE1_ref.toFixed(2);
+            document.getElementById('v_y0').innerText = Y0_ref.toFixed(2);
+
+            const T = []; const L = []; const R = [];
             for(let i=1; i<=6; i++) {
                 T[i] = parseFloat(document.getElementById('t'+i).value);
-                BE[i] = parseFloat(document.getElementById('be'+i).value);
                 document.getElementById('v_t'+i).innerText = T[i].toFixed(2);
-                document.getElementById('v_be'+i).innerText = BE[i].toFixed(2);
             }
             for(let i=1; i<=5; i++) {
                 L[i] = parseFloat(document.getElementById('l'+i).value);
@@ -111,80 +110,79 @@
             const marginX = 220;
             const marginY = 120;
 
-            const totalLenL = L[1] + L[2] + L[3] + L[4] + L[5];
-            const totalLenR = R[1] + R[2] + R[3] + R[4] + R[5];
-            const maxTotalLen = Math.max(totalLenL, totalLenR);
+            // Posição acumulada dos pilares em relação ao Pilar P1 (0,0)
+            const yL_pilares = [0];
+            const yR_pilares = [0];
+            for(let i=1; i<=5; i++) {
+                yL_pilares[i] = yL_pilares[i-1] + L[i];
+                yR_pilares[i] = yR_pilares[i-1] + R[i];
+            }
+
+            const totalLenL = yL_pilares[5];
+            const totalLenR = yR_pilares[5];
+            const maxPilaresLen = Math.max(totalLenL, totalLenR);
+            const cintamentoLen = maxPilaresLen + Y0_ref + 0.50; // Comprimento total do retalho
 
             canvas.width = (W * scale) + (marginX * 2);
-            canvas.height = (maxTotalLen * scale) + (marginY * 2);
+            canvas.height = (cintamentoLen * scale) + (marginY * 2);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Costão Rochoso
+            // Costão Rochoso em Terra
+            const xCintLeft = marginX;
+            const xCintRight = marginX + (W * scale);
+            const yCintTop = marginY;
+            const yCintBottom = yCintTop + (cintamentoLen * scale);
+
             ctx.fillStyle = "#cbd5e1";
             ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.rect(marginX - 20, marginY - 60, (W * scale) + 40, 40);
+            ctx.rect(marginX - 30, yCintTop - 50, (W * scale) + 60, 40);
             ctx.fill(); ctx.stroke();
             ctx.fillStyle = "#334155";
             ctx.font = "bold 13px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("COSTÃO ROCHOSO (EIXO 1)", marginX + (W * scale)/2, marginY - 35);
+            ctx.fillText("COSTÃO ROCHOSO (TERRA)", marginX + (W * scale)/2, yCintTop - 25);
 
-            // Vigamento Retangular Principal
+            // Vigamento Retangular do Cintamento (Estrutura de Concreto)
             ctx.fillStyle = "rgba(56, 189, 248, 0.08)";
             ctx.strokeStyle = "#0284c7";
             ctx.lineWidth = 5;
-            ctx.fillRect(marginX, marginY, W * scale, maxTotalLen * scale);
-            ctx.strokeRect(marginX, marginY, W * scale, maxTotalLen * scale);
+            ctx.fillRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
+            ctx.strokeRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
 
-            // Posição vertical acumulada dos eixos esquerdos e direitos
-            const yLeft = [
-                marginY,
-                marginY + L[1]*scale,
-                marginY + (L[1]+L[2])*scale,
-                marginY + (L[1]+L[2]+L[3])*scale,
-                marginY + (L[1]+L[2]+L[3]+L[4])*scale,
-                marginY + totalLenL*scale
-            ];
+            // Desenhar os 12 Pilares Medidos no Mar
+            const yP1_canvas = yCintTop + (Y0_ref * scale);
 
-            const yRight = [
-                marginY,
-                marginY + R[1]*scale,
-                marginY + (R[1]+R[2])*scale,
-                marginY + (R[1]+R[2]+R[3])*scale,
-                marginY + (R[1]+R[2]+R[3]+R[4])*scale,
-                marginY + totalLenR*scale
-            ];
-
-            // Desenhar Vigas e Pilares
             for(let i=1; i<=6; i++) {
-                const yL = yLeft[i-1];
-                const yR = yRight[i-1];
+                const yL = yP1_canvas + (yL_pilares[i-1] * scale);
+                const yR = yP1_canvas + (yR_pilares[i-1] * scale);
 
-                const pLeftX = marginX + (BE[i] * scale);
+                // Cálculo das posições X reais dos pilares
+                // O Pilar P1 fica exatamente a BE1_ref da borda esquerda do cintamento
+                const pLeftX = xCintLeft + (BE1_ref * scale);
                 const pRightX = pLeftX + (T[i] * scale);
 
-                // Linha de Eixo ligando P_esquerdos a P_direitos
-                ctx.strokeStyle = "rgba(2, 132, 199, 0.5)";
-                ctx.lineWidth = 2;
-                ctx.beginPath(); 
-                ctx.moveTo(pLeftX, yL); 
-                ctx.lineTo(pRightX, yR); 
-                ctx.stroke();
+                // Cálculo dos Beirais Reais para este Eixo
+                const BE_i = (pLeftX - xCintLeft) / scale;
+                const BD_i = (xCintRight - pRightX) / scale;
 
-                // Pilares (Círculos)
+                // Eixo Transversal do Par de Pilares
+                ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(pLeftX, yL); ctx.lineTo(pRightX, yR); ctx.stroke();
+
+                // Desenhar Círculos dos Pilares P_ímpar e P_par
                 const pL_num = (i*2) - 1;
                 const pR_num = i*2;
 
-                // Pilar Esquerdo
-                ctx.fillStyle = (BE[i] < 0) ? "#dc2626" : "#0f172a";
+                // Pilar Esquerdo (Aviso em vermelho se ficar fora do cintamento)
+                ctx.fillStyle = (BE_i < 0) ? "#dc2626" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pLeftX, yL, 16, 0, Math.PI*2); ctx.fill();
 
-                // Pilar Direito
-                const BD = W - T[i] - BE[i];
-                ctx.fillStyle = (BD < 0) ? "#dc2626" : "#0f172a";
+                // Pilar Direito (Aviso em vermelho se ficar fora do cintamento)
+                ctx.fillStyle = (BD_i < 0) ? "#dc2626" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pRightX, yR, 16, 0, Math.PI*2); ctx.fill();
 
                 ctx.fillStyle = "#ffffff";
@@ -193,69 +191,61 @@
                 ctx.fillText("P" + pL_num, pLeftX, yL);
                 ctx.fillText("P" + pR_num, pRightX, yR);
 
-                // Rótulos de Balanços
+                // Rótulos de Beirais Reais Resultantes
                 ctx.font = "bold 11px sans-serif";
-                ctx.fillStyle = BE[i] < 0 ? "#dc2626" : "#0284c7";
-                ctx.fillText("BE"+i+": "+BE[i].toFixed(2)+"m", pLeftX - 45, yL);
+                ctx.fillStyle = BE_i < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillText("BE"+i+": "+BE_i.toFixed(2)+"m", pLeftX - 45, yL);
 
-                ctx.fillStyle = BD < 0 ? "#dc2626" : "#0284c7";
-                ctx.fillText("BD"+i+": "+BD.toFixed(2)+"m", pRightX + 45, yR);
+                ctx.fillStyle = BD_i < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillText("BD"+i+": "+BD_i.toFixed(2)+"m", pRightX + 45, yR);
             }
 
-            // Recorte da Escada (Próximo ao pilar 9/Eixo 5)
-            const yEixo5L = yLeft[4];
+            // Recorte da Escada (Eixo 5)
+            const yEixo5L = yP1_canvas + (yL_pilares[4] * scale);
             ctx.fillStyle = "#fef08a";
             ctx.strokeStyle = "#eab308";
             ctx.lineWidth = 2;
-            ctx.fillRect(marginX, yEixo5L - (2*scale), 1*scale, 2*scale);
-            ctx.strokeRect(marginX, yEixo5L - (2*scale), 1*scale, 2*scale);
+            ctx.fillRect(xCintLeft, yEixo5L - (2*scale), 1*scale, 2*scale);
+            ctx.strokeRect(xCintLeft, yEixo5L - (2*scale), 1*scale, 2*scale);
             ctx.fillStyle = "#854d0e";
             ctx.font = "bold 11px sans-serif";
-            ctx.fillText("ESCADA 2x1m", marginX + (0.5*scale), yEixo5L - (1*scale));
+            ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), yEixo5L - (1*scale));
         }
 
-        // FUNÇÃO DE EXPORTAR TABELA PARA WHATSAPP
+        // EXPORTAÇÃO E IMPORTAÇÃO
         function copiarTabelaWhatsApp() {
             const W = parseFloat(document.getElementById('w').value).toFixed(2);
-            let txt = `📐 *TABELA DE MEDIDAS AJUSTADAS NA OBRA*\n`;
+            const BE1_ref = parseFloat(document.getElementById('be1').value).toFixed(2);
+            const Y0_ref = parseFloat(document.getElementById('y0').value).toFixed(2);
+
+            let txt = `📐 *RELATÓRIO DE CINTAMENTO SOBRE PILARES EXECUTADOS*\n`;
             txt += `-----------------------------------\n`;
-            txt += `*Largura Total Retangular:* ${W}m\n\n`;
+            txt += `*Largura da Viga do Cintamento:* ${W}m\n`;
+            txt += `*Posição Lateral (BE1 no P1):* ${BE1_ref}m\n`;
+            txt += `*Avanço no Costão (Y0):* ${Y0_ref}m\n\n`;
             
-            txt += `*EIXOS TRANSVERSAIS & BEIRAIS:*\n`;
+            txt += `*BEIRAIS RESULTANTES DA FÔRMA:*\n`;
+            const pLeftX = BE1_ref * 1;
             for(let i=1; i<=6; i++) {
-                const T = parseFloat(document.getElementById('t'+i).value).toFixed(2);
-                const BE = parseFloat(document.getElementById('be'+i).value).toFixed(2);
-                const BD = (W - T - BE).toFixed(2);
-                txt += `• *Eixo ${i}*: T${i}=${T}m | BE${i}=${BE}m | BD${i}=${BD}m\n`;
+                const T = parseFloat(document.getElementById('t'+i).value);
+                const BD_i = (W - T - BE1_ref).toFixed(2);
+                txt += `• *Eixo ${i}*: BE${i}=${BE1_ref}m | BD${i}=${BD_i}m (Vão P-P: ${T.toFixed(2)}m)\n`;
             }
 
-            txt += `\n*VÃOS LONGITUDINAIS ESQUERDOS (P1→P11):*\n`;
-            for(let i=1; i<=5; i++) {
-                const L = parseFloat(document.getElementById('l'+i).value).toFixed(2);
-                txt += `• L${i}: ${L}m  `;
-            }
-
-            txt += `\n\n*VÃOS LONGITUDINAIS DIREITOS (P2→P12):*\n`;
-            for(let i=1; i<=5; i++) {
-                const R = parseFloat(document.getElementById('r'+i).value).toFixed(2);
-                txt += `• R${i}: ${R}m  `;
-            }
-
-            txt += `\n\n-----------------------------------\n`;
-            txt += `*Código de Importação:* DATA:${obterPayloadJSON()}`;
+            txt += `\n*Código de Importação:* DATA:${obterPayloadJSON()}`;
 
             navigator.clipboard.writeText(txt).then(() => {
-                alert("Tabela de medidas copiada com sucesso! Abra o WhatsApp e dê 'Colar'.");
+                alert("Relatório de Cintamento copiado para o WhatsApp!");
             });
         }
 
-        // FUNÇÃO DE EXPORTAR CÓDIGO
         function obterPayloadJSON() {
-            const data = { w: document.getElementById('w').value };
-            for(let i=1; i<=6; i++) {
-                data['t'+i] = document.getElementById('t'+i).value;
-                data['be'+i] = document.getElementById('be'+i).value;
-            }
+            const data = {
+                w: document.getElementById('w').value,
+                be1: document.getElementById('be1').value,
+                y0: document.getElementById('y0').value
+            };
+            for(let i=1; i<=6; i++) data['t'+i] = document.getElementById('t'+i).value;
             for(let i=1; i<=5; i++) {
                 data['l'+i] = document.getElementById('l'+i).value;
                 data['r'+i] = document.getElementById('r'+i).value;
@@ -266,15 +256,14 @@
         function copiarCodigoData() {
             const payload = "DATA:" + obterPayloadJSON();
             navigator.clipboard.writeText(payload).then(() => {
-                alert("Código do Projeto copiado! Cole no WhatsApp para enviar.");
+                alert("Código de Importação copiado!");
             });
         }
 
-        // FUNÇÃO DE IMPORTAR DADOS
         function carregarData() {
             const input = document.getElementById('importInput').value.trim();
             if(!input.includes("DATA:")) {
-                alert("Formato inválido! Cole a mensagem que contém 'DATA:' do WhatsApp.");
+                alert("Cole a linha que contém 'DATA:' do WhatsApp.");
                 return;
             }
             try {
@@ -282,18 +271,18 @@
                 const data = JSON.parse(atob(code));
                 
                 if(data.w) document.getElementById('w').value = data.w;
-                for(let i=1; i<=6; i++) {
-                    if(data['t'+i]) document.getElementById('t'+i).value = data['t'+i];
-                    if(data['be'+i]) document.getElementById('be'+i).value = data['be'+i];
-                }
+                if(data.be1) document.getElementById('be1').value = data.be1;
+                if(data.y0) document.getElementById('y0').value = data.y0;
+
+                for(let i=1; i<=6; i++) if(data['t'+i]) document.getElementById('t'+i).value = data['t'+i];
                 for(let i=1; i<=5; i++) {
                     if(data['l'+i]) document.getElementById('l'+i).value = data['l'+i];
                     if(data['r'+i]) document.getElementById('r'+i).value = data['r'+i];
                 }
                 draw();
-                alert("Projeto carregado com sucesso!");
+                alert("Configuração de Cintamento Carregada!");
             } catch(e) {
-                alert("Erro ao ler dados! Verifique se copiou a linha do código completa.");
+                alert("Erro ao ler dados de importação.");
             }
         }
 
