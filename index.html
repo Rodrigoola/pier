@@ -94,8 +94,15 @@
                 <input type="range" id="y0" min="0.00" max="2.00" step="0.05" value="0.50" oninput="draw()">
             </div>
 
+            <!-- DESLOCAMENTO LONGITUDINAL P1 vs P2 -->
+            <div class="panel-title">2. Deslocamento Longitudinal do Pilar P1 em Relação a P2 (m)</div>
+            <div class="group dev-group">
+                <label>Deslocamento Longitudinal P1 (m): <span id="v_devY1">0.00</span></label>
+                <input type="range" id="devY1" min="-1.50" max="1.50" step="0.01" value="0.00" oninput="draw()">
+            </div>
+
             <!-- OPÇÕES DA ESCADA (ENTRE P7 E P9) -->
-            <div class="panel-title">2. Configuração do Recorte da Escada (2.00m x 1.00m)</div>
+            <div class="panel-title">3. Configuração do Recorte da Escada (2.00m x 1.00m)</div>
             <div class="group stair-group" style="display: flex; align-items: center; justify-content: space-between;">
                 <label style="margin: 0; cursor: pointer;" for="hasStair">Ativar Recorte da Escada?</label>
                 <input type="checkbox" id="hasStair" checked onchange="draw()">
@@ -106,14 +113,14 @@
             </div>
 
             <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) -->
-            <div class="panel-title">3. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m) [Até ±2.00m]</div>
+            <div class="panel-title">4. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m) [Até ±2.00m]</div>
             <div class="group dev-group"><label>Desvio P4 (m): <span id="v_dev4">0.00</span></label><input type="range" id="dev4" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P6 (m): <span id="v_dev6">0.00</span></label><input type="range" id="dev6" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P8 (m): <span id="v_dev8">0.00</span></label><input type="range" id="dev8" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P10 (m): <span id="v_dev10">0.00</span></label><input type="range" id="dev10" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
 
             <!-- VÃOS TRANSVERSAIS REAIS DO CROQUI (T1 a T6) -->
-            <div class="panel-title">4. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste ±20cm]</div>
+            <div class="panel-title">5. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste ±20cm]</div>
             <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
             <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.76</span></label><input type="range" id="t2" min="3.56" max="3.96" step="0.01" value="3.76" oninput="draw()"></div>
             <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.78</span></label><input type="range" id="t3" min="3.58" max="3.98" step="0.01" value="3.78" oninput="draw()"></div>
@@ -122,7 +129,7 @@
             <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">4.33</span></label><input type="range" id="t6" min="4.13" max="4.53" step="0.01" value="4.33" oninput="draw()"></div>
 
             <!-- VÃOS LONGITUDINAIS ESQUERDOS / COSTÃO (L1 a L5) -->
-            <div class="panel-title">5. Vãos Longitudinais ESQUERDOS / Costão (L1 a L5) [Ajuste ±20cm]</div>
+            <div class="panel-title">6. Vãos Longitudinais ESQUERDOS / Costão (L1 a L5) [Ajuste ±20cm]</div>
             <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
             <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.75</span></label><input type="range" id="l2" min="2.55" max="2.95" step="0.01" value="2.75" oninput="draw()"></div>
             <div class="group"><label>L3 (P5→P7) (m): <span id="v_l3">3.00</span></label><input type="range" id="l3" min="2.80" max="3.20" step="0.01" value="3.00" oninput="draw()"></div>
@@ -130,7 +137,7 @@
             <div class="group"><label>L5 (P9→P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
 
             <!-- VÃOS LONGITUDINAIS DIREITOS / MAR (R1 a R5) -->
-            <div class="panel-title">6. Vãos Longitudinais DIREITOS / Mar (R1 a R5) [Ajuste ±20cm]</div>
+            <div class="panel-title">7. Vãos Longitudinais DIREITOS / Mar (R1 a R5) [Ajuste ±20cm]</div>
             <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.65</span></label><input type="range" id="r1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
             <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">2.80</span></label><input type="range" id="r2" min="2.60" max="3.00" step="0.01" value="2.80" oninput="draw()"></div>
             <div class="group"><label>R3 (P6→P8) (m): <span id="v_r3">3.00</span></label><input type="range" id="r3" min="2.80" max="3.20" step="0.01" value="3.00" oninput="draw()"></div>
@@ -189,6 +196,7 @@
             const rotDeg = parseFloat(document.getElementById('rot').value);
             const rotRad = (rotDeg * Math.PI) / 180;
             const Y0_ref = parseFloat(document.getElementById('y0').value);
+            const devY1 = parseFloat(document.getElementById('devY1').value);
             
             const hasStair = document.getElementById('hasStair').checked;
             const stairY = parseFloat(document.getElementById('stairY').value);
@@ -207,6 +215,7 @@
             document.getElementById('v_bd2').innerText = BD2_ref.toFixed(2);
             document.getElementById('v_rot').innerText = rotDeg.toFixed(1);
             document.getElementById('v_y0').innerText = Y0_ref.toFixed(2);
+            document.getElementById('v_devY1').innerText = devY1.toFixed(2);
             document.getElementById('v_stairY').innerText = stairY.toFixed(2);
             document.getElementById('v_dev4').innerText = dev[1].toFixed(2);
             document.getElementById('v_dev6').innerText = dev[2].toFixed(2);
@@ -240,14 +249,14 @@
 
             const scale = 50;
 
-            // 1. Pilares Pares
+            // 1. Pilares Pares (P2 ao P12)
             const localR = [{x: dev[0], y: 0}];
             for(let i=1; i<=5; i++) {
                 localR[i] = { x: dev[i], y: localR[i-1].y + R[i] };
             }
 
-            // 2. Trilateração dos Pilares Ímpares
-            const localL = [{ x: localR[0].x - T[1], y: 0 }];
+            // 2. Trilateração dos Pilares Ímpares com Deslocamento Longitudinal devY1 no P1
+            const localL = [{ x: localR[0].x - T[1], y: devY1 }];
 
             for(let i=1; i<6; i++) {
                 const xA = localL[i-1].x;
@@ -379,7 +388,6 @@
                 const pB = worldL[i+1];
                 ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke();
 
-                // Rótulo da Cota Longitudinal L
                 const midX = (pA.x + pB.x) / 2;
                 const midY = (pA.y + pB.y) / 2;
                 ctx.fillStyle = "#cbd5e1";
@@ -394,7 +402,6 @@
                 const pB = worldR[i+1];
                 ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke();
 
-                // Rótulo da Cota Longitudinal R
                 const midX = (pA.x + pB.x) / 2;
                 const midY = (pA.y + pB.y) / 2;
                 ctx.fillStyle = "#cbd5e1";
@@ -411,12 +418,10 @@
                 const BE_i = (pL.x - xCintLeft) / scale;
                 const BD_i = (xCintRight - pR.x) / scale;
 
-                // Viga Transversal
                 ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
                 ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
 
-                // Rótulo da Cota Transversal T no centro do vão
                 const midX = (pL.x + pR.x) / 2;
                 const midY = (pL.y + pR.y) / 2;
                 ctx.fillStyle = "#fef08a";
@@ -427,13 +432,11 @@
                 const pL_num = (i*2) + 1;
                 const pR_num = (i*2) + 2;
 
-                // Pilar Esquerdo
                 ctx.fillStyle = (BE_i < 0) ? "#ef4444" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pL.x, pL.y, 14, 0, Math.PI*2); ctx.fill();
                 ctx.strokeStyle = (BE_i < 0) ? "#fca5a5" : "#38bdf8";
                 ctx.lineWidth = 2; ctx.stroke();
 
-                // Pilar Direito
                 ctx.fillStyle = (BD_i < 0) ? "#ef4444" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pR.x, pR.y, 14, 0, Math.PI*2); ctx.fill();
                 ctx.strokeStyle = (BD_i < 0) ? "#fca5a5" : "#38bdf8";
@@ -462,11 +465,9 @@
 
             const W = parseFloat(document.getElementById('w').value);
 
-            // Fundo CAD
             ctx.fillStyle = "#0b1329";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grade de Fundo
             ctx.strokeStyle = "rgba(51, 65, 85, 0.25)";
             ctx.lineWidth = 1;
             for(let x=0; x<canvas.width; x+=20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
@@ -483,26 +484,21 @@
             const gap_m = 0.02;
             const plankH_px = 0.02 * scaleP;
 
-            // Título do Corte
             ctx.fillStyle = "#38bdf8";
             ctx.font = "bold 15px sans-serif";
             ctx.textAlign = "left";
             ctx.fillText(`CORTE TRANSVERSAL DA SUPERESTRUTURA - LARGURA TOTAL: ${W.toFixed(2)}m`, 30, 40);
 
-            // Vigas de Concreto (Direita e Esquerda) - 20cm x 28cm
             ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
             ctx.strokeStyle = "#38bdf8";
             ctx.lineWidth = 3;
 
-            // Viga Esquerda
             ctx.fillRect(startX, startY, beamW_px, beamH_px);
             ctx.strokeRect(startX, startY, beamW_px, beamH_px);
 
-            // Viga Direita
             ctx.fillRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
             ctx.strokeRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
 
-            // Pilares de Apoio Redondos
             ctx.fillStyle = "#1e293b";
             ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 2;
@@ -517,7 +513,6 @@
             ctx.fillText("PILAR P_ímpar", startX + beamW_px/2, startY + beamH_px + 50);
             ctx.fillText("PILAR P_par", startX + widthPx - beamW_px/2, startY + beamH_px + 50);
 
-            // Paginação das Réguas de Madeira
             ctx.fillStyle = "#f59e0b";
             ctx.strokeStyle = "#78350f";
             ctx.lineWidth = 1;
@@ -534,7 +529,6 @@
                 countPlanks++;
             }
 
-            // Cotas em Texto
             ctx.fillStyle = "#f8fafc";
             ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "center";
@@ -573,6 +567,7 @@
                 bd2: document.getElementById('bd2').value,
                 rot: document.getElementById('rot').value,
                 y0: document.getElementById('y0').value,
+                devY1: document.getElementById('devY1').value,
                 hasStair: document.getElementById('hasStair').checked,
                 stairY: document.getElementById('stairY').value,
                 dev4: document.getElementById('dev4').value,
@@ -609,6 +604,7 @@
                 if(data.bd2) document.getElementById('bd2').value = data.bd2;
                 if(data.rot) document.getElementById('rot').value = data.rot;
                 if(data.y0) document.getElementById('y0').value = data.y0;
+                if(data.devY1) document.getElementById('devY1').value = data.devY1;
                 if(data.hasStair !== undefined) document.getElementById('hasStair').checked = data.hasStair;
                 if(data.stairY) document.getElementById('stairY').value = data.stairY;
                 if(data.dev4) document.getElementById('dev4').value = data.dev4;
