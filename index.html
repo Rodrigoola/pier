@@ -43,6 +43,10 @@
         input[type=checkbox] { cursor: pointer; accent-color: #eab308; width: 16px; height: 16px; }
 
         .canvas-card { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; overflow-x: auto; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+        .tab-btn { background: #0f172a; color: #94a3b8; border: 1px solid #334155; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .tab-btn.active { background: #38bdf8; color: #0c4a6e; border-color: #38bdf8; }
+
         canvas { background: #0b1329; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; border: 1px solid #334155; }
 
         .action-panel { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
@@ -74,7 +78,11 @@
                 <input type="range" id="w" min="3.50" max="6.00" step="0.05" value="4.40" oninput="draw()">
             </div>
             <div class="group highlight">
-                <label>Folga Lateral P2 ao Bordo Dir. (BD2) (m): <span id="v_bd2">0.25</span></label>
+                <label>Ajuste Beiral Esquerdo (BE1) (m): <span id="v_be1">0.25</span></label>
+                <input type="range" id="be1" min="-1.50" max="1.50" step="0.01" value="0.25" oninput="draw()">
+            </div>
+            <div class="group highlight">
+                <label>Ajuste Beiral Direito (BD2) (m): <span id="v_bd2">0.25</span></label>
                 <input type="range" id="bd2" min="-1.50" max="1.50" step="0.01" value="0.25" oninput="draw()">
             </div>
             <div class="group highlight">
@@ -97,12 +105,12 @@
                 <input type="range" id="stairY" min="0.0" max="20.0" step="0.1" value="9.90" oninput="draw()">
             </div>
 
-            <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) -->
-            <div class="panel-title">3. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m)</div>
-            <div class="group dev-group"><label>Desvio P4 (m): <span id="v_dev4">0.00</span></label><input type="range" id="dev4" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
-            <div class="group dev-group"><label>Desvio P6 (m): <span id="v_dev6">0.00</span></label><input type="range" id="dev6" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
-            <div class="group dev-group"><label>Desvio P8 (m): <span id="v_dev8">0.00</span></label><input type="range" id="dev8" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
-            <div class="group dev-group"><label>Desvio P10 (m): <span id="v_dev10">0.00</span></label><input type="range" id="dev10" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
+            <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) - AMPLIADO ATÉ 2M -->
+            <div class="panel-title">3. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m) [Até ±2.00m]</div>
+            <div class="group dev-group"><label>Desvio P4 (m): <span id="v_dev4">0.00</span></label><input type="range" id="dev4" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
+            <div class="group dev-group"><label>Desvio P6 (m): <span id="v_dev6">0.00</span></label><input type="range" id="dev6" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
+            <div class="group dev-group"><label>Desvio P8 (m): <span id="v_dev8">0.00</span></label><input type="range" id="dev8" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
+            <div class="group dev-group"><label>Desvio P10 (m): <span id="v_dev10">0.00</span></label><input type="range" id="dev10" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
 
             <!-- VÃOS TRANSVERSAIS REAIS DO CROQUI (T1 a T6) -->
             <div class="panel-title">4. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste ±20cm]</div>
@@ -143,17 +151,40 @@
         </div>
 
         <div class="canvas-card">
+            <div class="tabs">
+                <button id="btnPlan" class="tab-btn active" onclick="switchView('plan')">Planta Baixa (Locação)</button>
+                <button id="btnProfile" class="tab-btn" onclick="switchView('profile')">Vista de Perfil (Corte Transversal)</button>
+            </div>
             <canvas id="pierCanvas" width="800" height="1200"></canvas>
         </div>
     </div>
 
     <script>
+        let currentView = 'plan';
+
+        function switchView(view) {
+            currentView = view;
+            document.getElementById('btnPlan').className = 'tab-btn' + (view === 'plan' ? ' active' : '');
+            document.getElementById('btnProfile').className = 'tab-btn' + (view === 'profile' ? ' active' : '');
+            draw();
+        }
+
         function draw() {
+            if (currentView === 'plan') {
+                drawPlanView();
+            } else {
+                drawProfileView();
+            }
+        }
+
+        function drawPlanView() {
             const canvas = document.getElementById('pierCanvas');
             if(!canvas) return;
+            canvas.height = 1200;
             const ctx = canvas.getContext('2d');
 
             const W = parseFloat(document.getElementById('w').value);
+            const BE1_ref = parseFloat(document.getElementById('be1').value);
             const BD2_ref = parseFloat(document.getElementById('bd2').value);
             const rotDeg = parseFloat(document.getElementById('rot').value);
             const rotRad = (rotDeg * Math.PI) / 180;
@@ -172,6 +203,7 @@
             ];
 
             document.getElementById('v_w').innerText = W.toFixed(2);
+            document.getElementById('v_be1').innerText = BE1_ref.toFixed(2);
             document.getElementById('v_bd2').innerText = BD2_ref.toFixed(2);
             document.getElementById('v_rot').innerText = rotDeg.toFixed(1);
             document.getElementById('v_y0').innerText = Y0_ref.toFixed(2);
@@ -248,7 +280,7 @@
 
             const maxLenR = localR[5].y;
             const cintamentoLen = maxLenR + Y0_ref + 0.80; 
-            const xCintLeft = 200;
+            const xCintLeft = 200 - (BE1_ref * scale / 2);
             const xCintRight = xCintLeft + (W * scale);
             const yCintTop = 100;
             const yCintBottom = yCintTop + (cintamentoLen * scale);
@@ -381,6 +413,107 @@
             }
         }
 
+        function drawProfileView() {
+            const canvas = document.getElementById('pierCanvas');
+            if(!canvas) return;
+            canvas.height = 500;
+            const ctx = canvas.getContext('2d');
+
+            const W = parseFloat(document.getElementById('w').value); // Metros (ex: 4.40)
+
+            // Fundo CAD
+            ctx.fillStyle = "#0b1329";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grade de Fundo
+            ctx.strokeStyle = "rgba(51, 65, 85, 0.25)";
+            ctx.lineWidth = 1;
+            for(let x=0; x<canvas.width; x+=20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+            for(let y=0; y<canvas.height; y+=20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+
+            const scaleP = 130; // Escala do perfil
+            const startX = 110;
+            const startY = 280;
+
+            const widthPx = W * scaleP;
+            const beamW_px = 0.20 * scaleP;  // Viga 20 cm
+            const beamH_px = 0.28 * scaleP;  // Viga 28 cm
+            const plankW_m = 0.07;           // Régua 7 cm
+            const gap_m = 0.02;              // Espaço 2 cm
+            const plankH_px = 0.02 * scaleP; // Régua 2 cm de altura
+
+            // Título do Corte
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "bold 15px sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText(`CORTE TRANSVERSAL DA SUPERESTRUTURA - LARGURA TOTAL: ${W.toFixed(2)}m`, 30, 40);
+
+            // Vigas de Concreto (Direita e Esquerda) - 20cm x 28cm
+            ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 3;
+
+            // Viga Esquerda
+            ctx.fillRect(startX, startY, beamW_px, beamH_px);
+            ctx.strokeRect(startX, startY, beamW_px, beamH_px);
+
+            // Viga Direita
+            ctx.fillRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
+            ctx.strokeRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
+
+            // Pilares de Apoio Redondos (Abaixo da viga)
+            ctx.fillStyle = "#1e293b";
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.fillRect(startX - 15, startY + beamH_px, beamW_px + 30, 100);
+            ctx.strokeRect(startX - 15, startY + beamH_px, beamW_px + 30, 100);
+            ctx.fillRect(startX + widthPx - beamW_px - 15, startY + beamH_px, beamW_px + 30, 100);
+            ctx.strokeRect(startX + widthPx - beamW_px - 15, startY + beamH_px, beamW_px + 30, 100);
+
+            ctx.fillStyle = "#cbd5e1";
+            ctx.font = "11px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("PILAR P_ímpar", startX + beamW_px/2, startY + beamH_px + 50);
+            ctx.fillText("PILAR P_par", startX + widthPx - beamW_px/2, startY + beamH_px + 50);
+
+            // Paginação das Réguas de Madeira (7 cm x 2 cm com fresta de 2 cm)
+            ctx.fillStyle = "#f59e0b";
+            ctx.strokeStyle = "#78350f";
+            ctx.lineWidth = 1;
+
+            let currX = 0;
+            let countPlanks = 0;
+            const pitch = plankW_m + gap_m;
+
+            while (currX + plankW_m <= W) {
+                const plankPxX = startX + (currX * scaleP);
+                ctx.fillRect(plankPxX, startY - plankH_px, plankW_m * scaleP, plankH_px);
+                ctx.strokeRect(plankPxX, startY - plankH_px, plankW_m * scaleP, plankH_px);
+                currX += pitch;
+                countPlanks++;
+            }
+
+            // Cotas e Especificações Técnicas em Texto
+            ctx.fillStyle = "#f8fafc";
+            ctx.font = "bold 12px sans-serif";
+            ctx.textAlign = "center";
+
+            // Cota Largura Viga (20 cm)
+            ctx.fillText("20 cm", startX + beamW_px/2, startY + beamH_px/2);
+            ctx.fillText("20 cm", startX + widthPx - beamW_px/2, startY + beamH_px/2);
+
+            // Cota Profundidade Viga (28 cm)
+            ctx.textAlign = "right";
+            ctx.fillText("28 cm", startX - 10, startY + beamH_px/2);
+
+            // Especificações da Madeira
+            ctx.fillStyle = "#f59e0b";
+            ctx.textAlign = "left";
+            ctx.fillText(`• Réguas de Madeira: 7 cm x 2 cm (Espaçamento: 2 cm)`, 30, 80);
+            ctx.fillText(`• Total de Réguas no Deck Transversal: ${countPlanks} peças simultâneas`, 30, 105);
+            ctx.fillText(`• Vigas de Cintamento Lateral: 20 cm de largura x 28 cm de profundidade`, 30, 130);
+        }
+
         function copiarTabelaWhatsApp() {
             const W = parseFloat(document.getElementById('w').value).toFixed(2);
             const rot = parseFloat(document.getElementById('rot').value).toFixed(1);
@@ -398,6 +531,7 @@
         function obterPayloadJSON() {
             const data = {
                 w: document.getElementById('w').value,
+                be1: document.getElementById('be1').value,
                 bd2: document.getElementById('bd2').value,
                 rot: document.getElementById('rot').value,
                 y0: document.getElementById('y0').value,
@@ -433,6 +567,7 @@
                 const data = JSON.parse(atob(code));
                 
                 if(data.w) document.getElementById('w').value = data.w;
+                if(data.be1) document.getElementById('be1').value = data.be1;
                 if(data.bd2) document.getElementById('bd2').value = data.bd2;
                 if(data.rot) document.getElementById('rot').value = data.rot;
                 if(data.y0) document.getElementById('y0').value = data.y0;
