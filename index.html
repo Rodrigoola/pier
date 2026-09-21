@@ -3,45 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeção de Cintamento sobre Pilares Existentes</title>
+    <title>Simulador de Cintamento de Píer - Análise Estrutural</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background: #0f172a; color: #f8fafc; padding: 20px; }
-        h1 { text-align: center; font-size: 22px; color: #38bdf8; margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
-        .container { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
-        .panel-title { font-size: 14px; font-weight: bold; color: #38bdf8; text-transform: uppercase; margin-bottom: 10px; grid-column: 1 / -1; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-        .controls { background: #1e293b; padding: 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        .group { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
-        .group.highlight { border-color: #38bdf8; background: #1e293b; }
-        label { font-size: 12px; color: #94a3b8; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 4px; }
-        input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
-        .canvas-card { background: #1e293b; padding: 20px; border-radius: 12px; text-align: center; overflow-x: auto; }
-        canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: block; margin: 0 auto; }
+        body { background: #0f172a; color: #f8fafc; padding: 15px; }
+        h1 { text-align: center; font-size: 20px; color: #38bdf8; margin-bottom: 4px; }
+        p.subtitle { text-align: center; color: #94a3b8; font-size: 12px; margin-bottom: 15px; }
         
-        .action-panel { background: #1e293b; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 15px; }
+        .container { display: flex; flex-direction: column; gap: 15px; max-width: 1400px; margin: 0 auto; }
+        
+        .status-banner {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .status-ok { background: #166534; color: #4ade80; border: 2px solid #22c55e; }
+        .status-error { background: #991b1b; color: #fca5a5; border: 2px solid #ef4444; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .controls { background: #1e293b; padding: 15px; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+        .panel-title { font-size: 13px; font-weight: bold; color: #38bdf8; text-transform: uppercase; margin-bottom: 6px; grid-column: 1 / -1; border-bottom: 1px solid #334155; padding-bottom: 4px; }
+        
+        .group { background: #0f172a; padding: 8px 10px; border-radius: 8px; border: 1px solid #334155; }
+        .group.highlight { border-color: #38bdf8; background: #111e36; }
+        .group.stair-group { border-color: #eab308; background: #1c1917; }
+        
+        label { font-size: 11px; color: #94a3b8; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 3px; }
+        input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
+        input[type=checkbox] { cursor: pointer; accent-color: #eab308; width: 16px; height: 16px; }
+
+        .canvas-card { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; overflow-x: auto; }
+        canvas { background: #020617; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; }
+
+        .action-panel { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
-        .btn { padding: 12px 20px; font-weight: bold; font-size: 14px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; flex: 1; min-width: 200px; }
+        .btn { padding: 10px 15px; font-weight: bold; font-size: 13px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; flex: 1; min-width: 180px; }
         .btn-green { background: #22c55e; color: #052e16; }
         .btn-green:hover { background: #16a34a; }
         .btn-blue { background: #38bdf8; color: #0c4a6e; }
         .btn-blue:hover { background: #0284c7; }
-        .import-box { display: flex; gap: 10px; margin-top: 10px; }
-        .import-box input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 13px; }
+        .import-box { display: flex; gap: 8px; margin-top: 5px; }
+        .import-box input { flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 12px; }
     </style>
 </head>
 <body>
-    <h1>Simulador de Cintamento sobre Pilares Existentes</h1>
-    <p class="subtitle">Pilares imutáveis no mar (Referência $P_1$) + Fôrma Retangular do Cintamento Ajustável</p>
+    <h1>Simulador de Cintamento de Píer</h1>
+    <p class="subtitle">Encaixe da Fôrma Retangular sobre Malha Rígida Fixa no Mar (Referência Eixo $P_2 \rightarrow P_{12}$)</p>
     
     <div class="container">
-        <div class="controls">
-            <div class="panel-title">1. Geometria da Fôrma do Cintamento (Viga Superior Retangular)</div>
-            <div class="group highlight"><label>Largura Total do Cintamento (W) (m): <span id="v_w">4.40</span></label><input type="range" id="w" min="3.50" max="6.00" step="0.05" value="4.40" oninput="draw()"></div>
-            <div class="group highlight"><label>Posição Lateral da Fôrma (Referência BE1) (m): <span id="v_be1">0.25</span></label><input type="range" id="be1" min="-1.50" max="1.50" step="0.01" value="0.25" oninput="draw()"></div>
-            <div class="group highlight"><label>Avanço da Fôrma sobre Costão (Y0) (m): <span id="v_y0">0.50</span></label><input type="range" id="y0" min="0.00" max="2.00" step="0.05" value="0.50" oninput="draw()"></div>
+        <!-- BANNER DE STATUS DO CINTAMENTO -->
+        <div id="statusBanner" class="status-banner status-ok">
+            ✓ CINTAMENTO 100% APOIADO SOBRE OS PILARES
+        </div>
 
-            <div class="panel-title">2. Vãos Transversais Reais entre Pilares Medidos no Mar (T1 a T6)</div>
+        <div class="controls">
+            <!-- CONTROLES DO CINTAMENTO -->
+            <div class="panel-title">1. Fôrma do Cintamento & Alinhamento Rígido</div>
+            <div class="group highlight">
+                <label>Largura do Cintamento (W) (m): <span id="v_w">4.40</span></label>
+                <input type="range" id="w" min="3.50" max="6.00" step="0.05" value="4.40" oninput="draw()">
+            </div>
+            <div class="group highlight">
+                <label>Folga Lateral P2 ao Bordo Dir. (BD2) (m): <span id="v_bd2">0.25</span></label>
+                <input type="range" id="bd2" min="-1.50" max="1.50" step="0.01" value="0.25" oninput="draw()">
+            </div>
+            <div class="group highlight">
+                <label>Ângulo do Eixo P2→P12 (°): <span id="v_rot">0.0</span></label>
+                <input type="range" id="rot" min="-15.0" max="15.0" step="0.1" value="0.0" oninput="draw()">
+            </div>
+            <div class="group highlight">
+                <label>Avanço no Costão / Recuo Y0 (m): <span id="v_y0">0.50</span></label>
+                <input type="range" id="y0" min="0.00" max="2.00" step="0.05" value="0.50" oninput="draw()">
+            </div>
+
+            <!-- OPÇÕES DA ESCADA -->
+            <div class="panel-title">2. Configuração do Recorte da Escada (2.00m x 1.00m)</div>
+            <div class="group stair-group" style="display: flex; align-items: center; justify-content: space-between;">
+                <label style="margin: 0; cursor: pointer;" for="hasStair">Ativar Recorte da Escada?</label>
+                <input type="checkbox" id="hasStair" checked onchange="draw()">
+            </div>
+            <div class="group stair-group">
+                <label>Posição da Escada (Eixo Y) (m): <span id="v_stairY">12.00</span></label>
+                <input type="range" id="stairY" min="0.0" max="20.0" step="0.2" value="12.00" oninput="draw()">
+            </div>
+
+            <!-- MEASURED SPANS -->
+            <div class="panel-title">3. Vãos Transversais Medidos Fixos (T1 a T6)</div>
             <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="2.5" max="5.0" step="0.01" value="3.90" oninput="draw()"></div>
             <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.83</span></label><input type="range" id="t2" min="2.5" max="5.0" step="0.01" value="3.83" oninput="draw()"></div>
             <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.84</span></label><input type="range" id="t3" min="2.5" max="5.0" step="0.01" value="3.84" oninput="draw()"></div>
@@ -49,14 +105,14 @@
             <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">3.95</span></label><input type="range" id="t5" min="2.5" max="5.0" step="0.01" value="3.95" oninput="draw()"></div>
             <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">3.87</span></label><input type="range" id="t6" min="2.5" max="5.0" step="0.01" value="3.87" oninput="draw()"></div>
 
-            <div class="panel-title">3. Vãos Longitudinais ESQUERDOS Medidos no Mar (L1 a L5 - P1→P11)</div>
+            <div class="panel-title">4. Vãos Longitudinais ESQUERDOS Fixos (L1 a L5 - P1→P11)</div>
             <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="1.5" max="5.0" step="0.05" value="3.65" oninput="draw()"></div>
             <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.80</span></label><input type="range" id="l2" min="1.5" max="5.0" step="0.05" value="2.80" oninput="draw()"></div>
             <div class="group"><label>L3 (P5→P7) (m): <span id="v_l3">3.00</span></label><input type="range" id="l3" min="1.5" max="5.0" step="0.05" value="3.00" oninput="draw()"></div>
             <div class="group"><label>L4 (P7→P9) (m): <span id="v_l4">3.80</span></label><input type="range" id="l4" min="1.5" max="5.0" step="0.05" value="3.80" oninput="draw()"></div>
             <div class="group"><label>L5 (P9→P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="1.5" max="5.0" step="0.05" value="3.90" oninput="draw()"></div>
 
-            <div class="panel-title">4. Vãos Longitudinais DIREITOS Medidos no Mar (R1 a R5 - P2→P12)</div>
+            <div class="panel-title">5. Vãos Longitudinais DIREITOS Fixos (R1 a R5 - P2→P12)</div>
             <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.65</span></label><input type="range" id="r1" min="1.5" max="5.0" step="0.05" value="3.65" oninput="draw()"></div>
             <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">2.80</span></label><input type="range" id="r2" min="1.5" max="5.0" step="0.05" value="2.80" oninput="draw()"></div>
             <div class="group"><label>R3 (P6→P8) (m): <span id="v_r3">3.00</span></label><input type="range" id="r3" min="1.5" max="5.0" step="0.05" value="3.00" oninput="draw()"></div>
@@ -72,7 +128,7 @@
             </div>
             <div class="import-box">
                 <input type="text" id="importInput" placeholder="Cole o Código de Importação do WhatsApp aqui...">
-                <button class="btn btn-blue" style="flex:0; min-width: 120px;" onclick="carregarData()">Carregar</button>
+                <button class="btn btn-blue" style="flex:0; min-width: 100px;" onclick="carregarData()">Carregar</button>
             </div>
         </div>
 
@@ -87,12 +143,19 @@
             const ctx = canvas.getContext('2d');
 
             const W = parseFloat(document.getElementById('w').value);
-            const BE1_ref = parseFloat(document.getElementById('be1').value);
+            const BD2_ref = parseFloat(document.getElementById('bd2').value);
+            const rotDeg = parseFloat(document.getElementById('rot').value);
+            const rotRad = (rotDeg * Math.PI) / 180;
             const Y0_ref = parseFloat(document.getElementById('y0').value);
+            
+            const hasStair = document.getElementById('hasStair').checked;
+            const stairY = parseFloat(document.getElementById('stairY').value);
 
             document.getElementById('v_w').innerText = W.toFixed(2);
-            document.getElementById('v_be1').innerText = BE1_ref.toFixed(2);
+            document.getElementById('v_bd2').innerText = BD2_ref.toFixed(2);
+            document.getElementById('v_rot').innerText = rotDeg.toFixed(1);
             document.getElementById('v_y0').innerText = Y0_ref.toFixed(2);
+            document.getElementById('v_stairY').innerText = stairY.toFixed(2);
 
             const T = []; const L = []; const R = [];
             for(let i=1; i<=6; i++) {
@@ -106,144 +169,183 @@
                 document.getElementById('v_r'+i).innerText = R[i].toFixed(2);
             }
 
-            const scale = 75;
-            const marginX = 220;
-            const marginY = 120;
+            const scale = 65;
+            const marginX = 200;
+            const marginY = 100;
 
-            // Posição acumulada dos pilares em relação ao Pilar P1 (0,0)
-            const yL_pilares = [0];
-            const yR_pilares = [0];
+            // Malha de Pilares no Sistema do Eixo P2->P12
+            const localR = [{x: 0, y: 0}];
             for(let i=1; i<=5; i++) {
-                yL_pilares[i] = yL_pilares[i-1] + L[i];
-                yR_pilares[i] = yR_pilares[i-1] + R[i];
+                localR[i] = { x: 0, y: localR[i-1].y + R[i] };
             }
 
-            const totalLenL = yL_pilares[5];
-            const totalLenR = yR_pilares[5];
-            const maxPilaresLen = Math.max(totalLenL, totalLenR);
-            const cintamentoLen = maxPilaresLen + Y0_ref + 0.50; // Comprimento total do retalho
+            const localL = [];
+            for(let i=0; i<6; i++) {
+                localL[i] = { x: -T[i+1], y: localR[i].y };
+            }
+
+            const maxLenR = localR[5].y;
+            const cintamientoLen = maxLenR + Y0_ref + 0.80;
 
             canvas.width = (W * scale) + (marginX * 2);
-            canvas.height = (cintamentoLen * scale) + (marginY * 2);
+            canvas.height = (cintamientoLen * scale) + (marginY * 2);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Costão Rochoso em Terra
-            const xCintLeft = marginX;
             const xCintRight = marginX + (W * scale);
+            const xCintLeft = marginX;
             const yCintTop = marginY;
             const yCintBottom = yCintTop + (cintamentoLen * scale);
 
+            // Calcular Pilares no Mundo
+            const p2_X = xCintRight - (BD2_ref * scale);
+            const p2_Y = yCintTop + (Y0_ref * scale);
+
+            function transformPoint(ptLocal) {
+                const xr = ptLocal.x * Math.cos(rotRad) - ptLocal.y * Math.sin(rotRad);
+                const yr = ptLocal.x * Math.sin(rotRad) + ptLocal.y * Math.cos(rotRad);
+                return {
+                    x: p2_X + (xr * scale),
+                    y: p2_Y + (yr * scale)
+                };
+            }
+
+            const worldR = localR.map(transformPoint);
+            const worldL = localL.map(transformPoint);
+
+            // Validação do Cintamento
+            let isAllSupported = true;
+            for(let i=0; i<6; i++) {
+                const pL = worldL[i];
+                const pR = worldR[i];
+                const be = (pL.x - xCintLeft) / scale;
+                const bd = (xCintRight - pR.x) / scale;
+                if(be < 0 || bd < 0 || pL.y < yCintTop || pL.y > yCintBottom || pR.y < yCintTop || pR.y > yCintBottom) {
+                    isAllSupported = false;
+                }
+            }
+
+            // Atualizar Banner
+            const banner = document.getElementById('statusBanner');
+            if(isAllSupported) {
+                banner.className = "status-banner status-ok";
+                banner.innerText = "✓ CINTAMENTO 100% APOIADO SOBRE OS PILARES";
+            } else {
+                banner.className = "status-banner status-error";
+                banner.innerText = "⚠️ ATENÇÃO: CINTAMENTO FORA DOS PILARES! RISCO DEESTRUTURAL";
+            }
+
+            // Desenhar Costão
             ctx.fillStyle = "#cbd5e1";
             ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.rect(marginX - 30, yCintTop - 50, (W * scale) + 60, 40);
+            ctx.rect(marginX - 30, yCintTop - 45, (W * scale) + 60, 35);
             ctx.fill(); ctx.stroke();
             ctx.fillStyle = "#334155";
-            ctx.font = "bold 13px sans-serif";
+            ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("COSTÃO ROCHOSO (TERRA)", marginX + (W * scale)/2, yCintTop - 25);
+            ctx.fillText("COSTÃO ROCHOSO (TERRA)", marginX + (W * scale)/2, yCintTop - 22);
 
-            // Vigamento Retangular do Cintamento (Estrutura de Concreto)
-            ctx.fillStyle = "rgba(56, 189, 248, 0.08)";
-            ctx.strokeStyle = "#0284c7";
+            // Desenhar Cintamento
+            if(isAllSupported) {
+                ctx.fillStyle = "rgba(56, 189, 248, 0.08)";
+                ctx.strokeStyle = "#0284c7";
+            } else {
+                ctx.fillStyle = "rgba(239, 68, 68, 0.2)";
+                ctx.strokeStyle = "#dc2626";
+            }
             ctx.lineWidth = 5;
             ctx.fillRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
             ctx.strokeRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
 
-            // Desenhar os 12 Pilares Medidos no Mar
-            const yP1_canvas = yCintTop + (Y0_ref * scale);
-
-            for(let i=1; i<=6; i++) {
-                const yL = yP1_canvas + (yL_pilares[i-1] * scale);
-                const yR = yP1_canvas + (yR_pilares[i-1] * scale);
-
-                // Cálculo das posições X reais dos pilares
-                // O Pilar P1 fica exatamente a BE1_ref da borda esquerda do cintamento
-                const pLeftX = xCintLeft + (BE1_ref * scale);
-                const pRightX = pLeftX + (T[i] * scale);
-
-                // Cálculo dos Beirais Reais para este Eixo
-                const BE_i = (pLeftX - xCintLeft) / scale;
-                const BD_i = (xCintRight - pRightX) / scale;
-
-                // Eixo Transversal do Par de Pilares
-                ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
+            // Escada
+            if(hasStair) {
+                const stairY_canvas = yCintTop + (stairY * scale);
+                ctx.fillStyle = "#fef08a";
+                ctx.strokeStyle = "#eab308";
                 ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(pLeftX, yL); ctx.lineTo(pRightX, yR); ctx.stroke();
-
-                // Desenhar Círculos dos Pilares P_ímpar e P_par
-                const pL_num = (i*2) - 1;
-                const pR_num = i*2;
-
-                // Pilar Esquerdo (Aviso em vermelho se ficar fora do cintamento)
-                ctx.fillStyle = (BE_i < 0) ? "#dc2626" : "#0f172a";
-                ctx.beginPath(); ctx.arc(pLeftX, yL, 16, 0, Math.PI*2); ctx.fill();
-
-                // Pilar Direito (Aviso em vermelho se ficar fora do cintamento)
-                ctx.fillStyle = (BD_i < 0) ? "#dc2626" : "#0f172a";
-                ctx.beginPath(); ctx.arc(pRightX, yR, 16, 0, Math.PI*2); ctx.fill();
-
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 12px sans-serif";
-                ctx.textAlign = "center"; ctx.textBaseline = "middle";
-                ctx.fillText("P" + pL_num, pLeftX, yL);
-                ctx.fillText("P" + pR_num, pRightX, yR);
-
-                // Rótulos de Beirais Reais Resultantes
-                ctx.font = "bold 11px sans-serif";
-                ctx.fillStyle = BE_i < 0 ? "#dc2626" : "#0284c7";
-                ctx.fillText("BE"+i+": "+BE_i.toFixed(2)+"m", pLeftX - 45, yL);
-
-                ctx.fillStyle = BD_i < 0 ? "#dc2626" : "#0284c7";
-                ctx.fillText("BD"+i+": "+BD_i.toFixed(2)+"m", pRightX + 45, yR);
+                ctx.fillRect(xCintLeft, stairY_canvas, 1*scale, 2*scale);
+                ctx.strokeRect(xCintLeft, stairY_canvas, 1*scale, 2*scale);
+                ctx.fillStyle = "#854d0e";
+                ctx.font = "bold 10px sans-serif";
+                ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), stairY_canvas + (1*scale));
             }
 
-            // Recorte da Escada (Eixo 5)
-            const yEixo5L = yP1_canvas + (yL_pilares[4] * scale);
-            ctx.fillStyle = "#fef08a";
+            // Linha Eixo P2-P12
             ctx.strokeStyle = "#eab308";
             ctx.lineWidth = 2;
-            ctx.fillRect(xCintLeft, yEixo5L - (2*scale), 1*scale, 2*scale);
-            ctx.strokeRect(xCintLeft, yEixo5L - (2*scale), 1*scale, 2*scale);
-            ctx.fillStyle = "#854d0e";
-            ctx.font = "bold 11px sans-serif";
-            ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), yEixo5L - (1*scale));
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath();
+            ctx.moveTo(worldR[0].x, worldR[0].y);
+            ctx.lineTo(worldR[5].x, worldR[5].y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Desenhar Vigas e Pilares
+            for(let i=0; i<6; i++) {
+                const pL = worldL[i];
+                const pR = worldR[i];
+
+                const BE_i = (pL.x - xCintLeft) / scale;
+                const BD_i = (xCintRight - pR.x) / scale;
+
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
+
+                const pL_num = (i*2) + 1;
+                const pR_num = (i*2) + 2;
+
+                // Pilar Esquerdo
+                ctx.fillStyle = (BE_i < 0) ? "#ef4444" : "#0f172a";
+                ctx.beginPath(); ctx.arc(pL.x, pL.y, 15, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = (BE_i < 0) ? "#fca5a5" : "#38bdf8";
+                ctx.lineWidth = 2; ctx.stroke();
+
+                // Pilar Direito
+                ctx.fillStyle = (BD_i < 0) ? "#ef4444" : "#0f172a";
+                ctx.beginPath(); ctx.arc(pR.x, pR.y, 15, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = (BD_i < 0) ? "#fca5a5" : "#38bdf8";
+                ctx.lineWidth = 2; ctx.stroke();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("P" + pL_num, pL.x, pL.y);
+                ctx.fillText("P" + pR_num, pR.x, pR.y);
+
+                ctx.font = "bold 10px sans-serif";
+                ctx.fillStyle = BE_i < 0 ? "#ef4444" : "#38bdf8";
+                ctx.fillText("BE"+(i+1)+": "+BE_i.toFixed(2)+"m", pL.x - 42, pL.y);
+
+                ctx.fillStyle = BD_i < 0 ? "#ef4444" : "#38bdf8";
+                ctx.fillText("BD"+(i+1)+": "+BD_i.toFixed(2)+"m", pR.x + 42, pR.y);
+            }
         }
 
-        // EXPORTAÇÃO E IMPORTAÇÃO
         function copiarTabelaWhatsApp() {
             const W = parseFloat(document.getElementById('w').value).toFixed(2);
-            const BE1_ref = parseFloat(document.getElementById('be1').value).toFixed(2);
-            const Y0_ref = parseFloat(document.getElementById('y0').value).toFixed(2);
+            const rot = parseFloat(document.getElementById('rot').value).toFixed(1);
 
-            let txt = `📐 *RELATÓRIO DE CINTAMENTO SOBRE PILARES EXECUTADOS*\n`;
+            let txt = `📐 *ANÁLISE DE CINTAMENTO E PILARES EXECUTADOS*\n`;
             txt += `-----------------------------------\n`;
-            txt += `*Largura da Viga do Cintamento:* ${W}m\n`;
-            txt += `*Posição Lateral (BE1 no P1):* ${BE1_ref}m\n`;
-            txt += `*Avanço no Costão (Y0):* ${Y0_ref}m\n\n`;
-            
-            txt += `*BEIRAIS RESULTANTES DA FÔRMA:*\n`;
-            const pLeftX = BE1_ref * 1;
-            for(let i=1; i<=6; i++) {
-                const T = parseFloat(document.getElementById('t'+i).value);
-                const BD_i = (W - T - BE1_ref).toFixed(2);
-                txt += `• *Eixo ${i}*: BE${i}=${BE1_ref}m | BD${i}=${BD_i}m (Vão P-P: ${T.toFixed(2)}m)\n`;
-            }
-
-            txt += `\n*Código de Importação:* DATA:${obterPayloadJSON()}`;
+            txt += `*Largura da Viga:* ${W}m | *Rotação Eixo:* ${rot}°\n\n`;
+            txt += `*Código de Importação:* DATA:${obterPayloadJSON()}`;
 
             navigator.clipboard.writeText(txt).then(() => {
-                alert("Relatório de Cintamento copiado para o WhatsApp!");
+                alert("Dados copiados para enviar via WhatsApp!");
             });
         }
 
         function obterPayloadJSON() {
             const data = {
                 w: document.getElementById('w').value,
-                be1: document.getElementById('be1').value,
-                y0: document.getElementById('y0').value
+                bd2: document.getElementById('bd2').value,
+                rot: document.getElementById('rot').value,
+                y0: document.getElementById('y0').value,
+                hasStair: document.getElementById('hasStair').checked,
+                stairY: document.getElementById('stairY').value
             };
             for(let i=1; i<=6; i++) data['t'+i] = document.getElementById('t'+i).value;
             for(let i=1; i<=5; i++) {
@@ -254,8 +356,7 @@
         }
 
         function copiarCodigoData() {
-            const payload = "DATA:" + obterPayloadJSON();
-            navigator.clipboard.writeText(payload).then(() => {
+            navigator.clipboard.writeText("DATA:" + obterPayloadJSON()).then(() => {
                 alert("Código de Importação copiado!");
             });
         }
@@ -271,8 +372,11 @@
                 const data = JSON.parse(atob(code));
                 
                 if(data.w) document.getElementById('w').value = data.w;
-                if(data.be1) document.getElementById('be1').value = data.be1;
+                if(data.bd2) document.getElementById('bd2').value = data.bd2;
+                if(data.rot) document.getElementById('rot').value = data.rot;
                 if(data.y0) document.getElementById('y0').value = data.y0;
+                if(data.hasStair !== undefined) document.getElementById('hasStair').checked = data.hasStair;
+                if(data.stairY) document.getElementById('stairY').value = data.stairY;
 
                 for(let i=1; i<=6; i++) if(data['t'+i]) document.getElementById('t'+i).value = data['t'+i];
                 for(let i=1; i<=5; i++) {
@@ -280,7 +384,7 @@
                     if(data['r'+i]) document.getElementById('r'+i).value = data['r'+i];
                 }
                 draw();
-                alert("Configuração de Cintamento Carregada!");
+                alert("Configuração Carregada com Sucesso!");
             } catch(e) {
                 alert("Erro ao ler dados de importação.");
             }
