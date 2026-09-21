@@ -105,7 +105,7 @@
                 <input type="range" id="stairY" min="0.0" max="20.0" step="0.1" value="9.90" oninput="draw()">
             </div>
 
-            <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) - AMPLIADO ATÉ 2M -->
+            <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) -->
             <div class="panel-title">3. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m) [Até ±2.00m]</div>
             <div class="group dev-group"><label>Desvio P4 (m): <span id="v_dev4">0.00</span></label><input type="range" id="dev4" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P6 (m): <span id="v_dev6">0.00</span></label><input type="range" id="dev6" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
@@ -155,7 +155,7 @@
                 <button id="btnPlan" class="tab-btn active" onclick="switchView('plan')">Planta Baixa (Locação)</button>
                 <button id="btnProfile" class="tab-btn" onclick="switchView('profile')">Vista de Perfil (Corte Transversal)</button>
             </div>
-            <canvas id="pierCanvas" width="800" height="1200"></canvas>
+            <canvas id="pierCanvas" width="850" height="1200"></canvas>
         </div>
     </div>
 
@@ -280,7 +280,7 @@
 
             const maxLenR = localR[5].y;
             const cintamentoLen = maxLenR + Y0_ref + 0.80; 
-            const xCintLeft = 200 - (BE1_ref * scale / 2);
+            const xCintLeft = 220 - (BE1_ref * scale / 2);
             const xCintRight = xCintLeft + (W * scale);
             const yCintTop = 100;
             const yCintBottom = yCintTop + (cintamentoLen * scale);
@@ -371,7 +371,39 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Vigas e Pilares
+            // Desenhar Linhas e Cotas Longitudinais Esquerdas (L1 - L5)
+            ctx.strokeStyle = "rgba(148, 163, 184, 0.5)";
+            ctx.lineWidth = 1.5;
+            for(let i=0; i<5; i++) {
+                const pA = worldL[i];
+                const pB = worldL[i+1];
+                ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke();
+
+                // Rótulo da Cota Longitudinal L
+                const midX = (pA.x + pB.x) / 2;
+                const midY = (pA.y + pB.y) / 2;
+                ctx.fillStyle = "#cbd5e1";
+                ctx.font = "bold 10px sans-serif";
+                ctx.textAlign = "right";
+                ctx.fillText(`L${i+1}: ${L[i+1].toFixed(2)}m`, midX - 12, midY);
+            }
+
+            // Desenhar Linhas e Cotas Longitudinais Direitas (R1 - R5)
+            for(let i=0; i<5; i++) {
+                const pA = worldR[i];
+                const pB = worldR[i+1];
+                ctx.beginPath(); ctx.moveTo(pA.x, pA.y); ctx.lineTo(pB.x, pB.y); ctx.stroke();
+
+                // Rótulo da Cota Longitudinal R
+                const midX = (pA.x + pB.x) / 2;
+                const midY = (pA.y + pB.y) / 2;
+                ctx.fillStyle = "#cbd5e1";
+                ctx.font = "bold 10px sans-serif";
+                ctx.textAlign = "left";
+                ctx.fillText(`R${i+1}: ${R[i+1].toFixed(2)}m`, midX + 12, midY);
+            }
+
+            // Vigas Transversais, Cotas T e Pilares
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
                 const pR = worldR[i];
@@ -379,9 +411,18 @@
                 const BE_i = (pL.x - xCintLeft) / scale;
                 const BD_i = (xCintRight - pR.x) / scale;
 
+                // Viga Transversal
                 ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
                 ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
+
+                // Rótulo da Cota Transversal T no centro do vão
+                const midX = (pL.x + pR.x) / 2;
+                const midY = (pL.y + pR.y) / 2;
+                ctx.fillStyle = "#fef08a";
+                ctx.font = "bold 10px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(`T${i+1}: ${T[i+1].toFixed(2)}m`, midX, midY - 6);
 
                 const pL_num = (i*2) + 1;
                 const pR_num = (i*2) + 2;
@@ -406,10 +447,10 @@
 
                 ctx.font = "bold 10px sans-serif";
                 ctx.fillStyle = BE_i < 0 ? "#ef4444" : "#38bdf8";
-                ctx.fillText("BE"+(i+1)+": "+BE_i.toFixed(2)+"m", pL.x - 42, pL.y);
+                ctx.fillText("BE"+(i+1)+": "+BE_i.toFixed(2)+"m", pL.x - 48, pL.y);
 
                 ctx.fillStyle = BD_i < 0 ? "#ef4444" : "#38bdf8";
-                ctx.fillText("BD"+(i+1)+": "+BD_i.toFixed(2)+"m", pR.x + 42, pR.y);
+                ctx.fillText("BD"+(i+1)+": "+BD_i.toFixed(2)+"m", pR.x + 48, pR.y);
             }
         }
 
@@ -419,7 +460,7 @@
             canvas.height = 500;
             const ctx = canvas.getContext('2d');
 
-            const W = parseFloat(document.getElementById('w').value); // Metros (ex: 4.40)
+            const W = parseFloat(document.getElementById('w').value);
 
             // Fundo CAD
             ctx.fillStyle = "#0b1329";
@@ -431,16 +472,16 @@
             for(let x=0; x<canvas.width; x+=20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
             for(let y=0; y<canvas.height; y+=20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
 
-            const scaleP = 130; // Escala do perfil
+            const scaleP = 130;
             const startX = 110;
             const startY = 280;
 
             const widthPx = W * scaleP;
-            const beamW_px = 0.20 * scaleP;  // Viga 20 cm
-            const beamH_px = 0.28 * scaleP;  // Viga 28 cm
-            const plankW_m = 0.07;           // Régua 7 cm
-            const gap_m = 0.02;              // Espaço 2 cm
-            const plankH_px = 0.02 * scaleP; // Régua 2 cm de altura
+            const beamW_px = 0.20 * scaleP;
+            const beamH_px = 0.28 * scaleP;
+            const plankW_m = 0.07;
+            const gap_m = 0.02;
+            const plankH_px = 0.02 * scaleP;
 
             // Título do Corte
             ctx.fillStyle = "#38bdf8";
@@ -461,7 +502,7 @@
             ctx.fillRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
             ctx.strokeRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
 
-            // Pilares de Apoio Redondos (Abaixo da viga)
+            // Pilares de Apoio Redondos
             ctx.fillStyle = "#1e293b";
             ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 2;
@@ -476,7 +517,7 @@
             ctx.fillText("PILAR P_ímpar", startX + beamW_px/2, startY + beamH_px + 50);
             ctx.fillText("PILAR P_par", startX + widthPx - beamW_px/2, startY + beamH_px + 50);
 
-            // Paginação das Réguas de Madeira (7 cm x 2 cm com fresta de 2 cm)
+            // Paginação das Réguas de Madeira
             ctx.fillStyle = "#f59e0b";
             ctx.strokeStyle = "#78350f";
             ctx.lineWidth = 1;
@@ -493,20 +534,17 @@
                 countPlanks++;
             }
 
-            // Cotas e Especificações Técnicas em Texto
+            // Cotas em Texto
             ctx.fillStyle = "#f8fafc";
             ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "center";
 
-            // Cota Largura Viga (20 cm)
             ctx.fillText("20 cm", startX + beamW_px/2, startY + beamH_px/2);
             ctx.fillText("20 cm", startX + widthPx - beamW_px/2, startY + beamH_px/2);
 
-            // Cota Profundidade Viga (28 cm)
             ctx.textAlign = "right";
             ctx.fillText("28 cm", startX - 10, startY + beamH_px/2);
 
-            // Especificações da Madeira
             ctx.fillStyle = "#f59e0b";
             ctx.textAlign = "left";
             ctx.fillText(`• Réguas de Madeira: 7 cm x 2 cm (Espaçamento: 2 cm)`, 30, 80);
