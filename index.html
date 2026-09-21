@@ -42,7 +42,7 @@
         input[type=checkbox] { cursor: pointer; accent-color: #eab308; width: 16px; height: 16px; }
 
         .canvas-card { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; overflow-x: auto; }
-        canvas { background: #020617; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; }
+        canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; }
 
         .action-panel { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -57,7 +57,7 @@
 </head>
 <body>
     <h1>Simulador de Cintamento de Píer</h1>
-    <p class="subtitle">Encaixe da Fôrma Retangular sobre Malha Rígida Fixa no Mar (Referência Eixo $P_2 \rightarrow P_{12}$)</p>
+    <p class="subtitle">Encaixe da Fôrma Retangular sobre Malha Rígida Fixa no Mar (Referência Eixo P2 → P12)</p>
     
     <div class="container">
         <!-- BANNER DE STATUS DO CINTAMENTO -->
@@ -140,6 +140,7 @@
     <script>
         function draw() {
             const canvas = document.getElementById('pierCanvas');
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
 
             const W = parseFloat(document.getElementById('w').value);
@@ -190,7 +191,9 @@
             canvas.width = (W * scale) + (marginX * 2);
             canvas.height = (cintamientoLen * scale) + (marginY * 2);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Fundo Branco Claro para o Desenho
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const xCintRight = marginX + (W * scale);
             const xCintLeft = marginX;
@@ -227,12 +230,14 @@
 
             // Atualizar Banner
             const banner = document.getElementById('statusBanner');
-            if(isAllSupported) {
-                banner.className = "status-banner status-ok";
-                banner.innerText = "✓ CINTAMENTO 100% APOIADO SOBRE OS PILARES";
-            } else {
-                banner.className = "status-banner status-error";
-                banner.innerText = "⚠️ ATENÇÃO: CINTAMENTO FORA DOS PILARES! RISCO DEESTRUTURAL";
+            if(banner) {
+                if(isAllSupported) {
+                    banner.className = "status-banner status-ok";
+                    banner.innerText = "✓ CINTAMENTO 100% APOIADO SOBRE OS PILARES";
+                } else {
+                    banner.className = "status-banner status-error";
+                    banner.innerText = "⚠️ ATENÇÃO: CINTAMENTO FORA DOS PILARES! RISCO ESTRUTURAL";
+                }
             }
 
             // Desenhar Costão
@@ -249,7 +254,7 @@
 
             // Desenhar Cintamento
             if(isAllSupported) {
-                ctx.fillStyle = "rgba(56, 189, 248, 0.08)";
+                ctx.fillStyle = "rgba(56, 189, 248, 0.12)";
                 ctx.strokeStyle = "#0284c7";
             } else {
                 ctx.fillStyle = "rgba(239, 68, 68, 0.2)";
@@ -290,7 +295,7 @@
                 const BE_i = (pL.x - xCintLeft) / scale;
                 const BD_i = (xCintRight - pR.x) / scale;
 
-                ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+                ctx.strokeStyle = "rgba(2, 132, 199, 0.5)";
                 ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
 
@@ -300,13 +305,13 @@
                 // Pilar Esquerdo
                 ctx.fillStyle = (BE_i < 0) ? "#ef4444" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pL.x, pL.y, 15, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = (BE_i < 0) ? "#fca5a5" : "#38bdf8";
+                ctx.strokeStyle = (BE_i < 0) ? "#ef4444" : "#0284c7";
                 ctx.lineWidth = 2; ctx.stroke();
 
                 // Pilar Direito
                 ctx.fillStyle = (BD_i < 0) ? "#ef4444" : "#0f172a";
                 ctx.beginPath(); ctx.arc(pR.x, pR.y, 15, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = (BD_i < 0) ? "#fca5a5" : "#38bdf8";
+                ctx.strokeStyle = (BD_i < 0) ? "#ef4444" : "#0284c7";
                 ctx.lineWidth = 2; ctx.stroke();
 
                 ctx.fillStyle = "#ffffff";
@@ -316,10 +321,10 @@
                 ctx.fillText("P" + pR_num, pR.x, pR.y);
 
                 ctx.font = "bold 10px sans-serif";
-                ctx.fillStyle = BE_i < 0 ? "#ef4444" : "#38bdf8";
+                ctx.fillStyle = BE_i < 0 ? "#dc2626" : "#0284c7";
                 ctx.fillText("BE"+(i+1)+": "+BE_i.toFixed(2)+"m", pL.x - 42, pL.y);
 
-                ctx.fillStyle = BD_i < 0 ? "#ef4444" : "#38bdf8";
+                ctx.fillStyle = BD_i < 0 ? "#dc2626" : "#0284c7";
                 ctx.fillText("BD"+(i+1)+": "+BD_i.toFixed(2)+"m", pR.x + 42, pR.y);
             }
         }
@@ -390,7 +395,9 @@
             }
         }
 
-        window.onload = draw;
+        window.onload = function() {
+            draw();
+        };
     </script>
 </body>
 </html>
