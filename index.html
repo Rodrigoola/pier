@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Píer Completo - 12 Pilares</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; padding: 20px; }
+        h1 { text-align: center; font-size: 22px; color: #38bdf8; margin-bottom: 20px; }
+        .container { display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .panel-title { font-size: 14px; font-weight: bold; color: #38bdf8; text-transform: uppercase; margin-bottom: 10px; grid-column: 1 / -1; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        .controls { background: #1e293b; padding: 20px; border-radius: 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        .group { background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; }
+        label { font-size: 12px; color: #94a3b8; font-weight: bold; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        input[type=range] { width: 100%; accent-color: #38bdf8; cursor: pointer; }
+        .canvas-card { background: #1e293b; padding: 20px; border-radius: 12px; text-align: center; overflow-x: auto; }
+        canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <h1>Simulador Estrutural de Píer - Planta Interativa</h1>
+    <div class="container">
+        <div class="controls">
+            <div class="panel-title">Largura Total da Estrutura Retangular</div>
+            <div class="group"><label>Largura Total (m): <span id="v_w">4.40</span></label><input type="range" id="w" min="3.80" max="6.00" step="0.05" value="4.40" oninput="draw()"></div>
+
+            <div class="panel-title">Vãos Transversais (T1 a T6)</div>
+            <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="2.5" max="5.0" step="0.01" value="3.90" oninput="draw()"></div>
+            <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.83</span></label><input type="range" id="t2" min="2.5" max="5.0" step="0.01" value="3.83" oninput="draw()"></div>
+            <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.84</span></label><input type="range" id="t3" min="2.5" max="5.0" step="0.01" value="3.84" oninput="draw()"></div>
+            <div class="group"><label>T4 (P7-P8) (m): <span id="v_t4">3.87</span></label><input type="range" id="t4" min="2.5" max="5.0" step="0.01" value="3.87" oninput="draw()"></div>
+            <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">3.95</span></label><input type="range" id="t5" min="2.5" max="5.0" step="0.01" value="3.95" oninput="draw()"></div>
+            <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">3.87</span></label><input type="range" id="t6" min="2.5" max="5.0" step="0.01" value="3.87" oninput="draw()"></div>
+
+            <div class="panel-title">Beirais Esquerdos (BE1 a BE6) — Permite Negativos</div>
+            <div class="group"><label>BE1 (m): <span id="v_be1">0.10</span></label><input type="range" id="be1" min="-2.00" max="2.00" step="0.01" value="0.10" oninput="draw()"></div>
+            <div class="group"><label>BE2 (m): <span id="v_be2">0.25</span></label><input type="range" id="be2" min="-2.00" max="2.00" step="0.01" value="0.25" oninput="draw()"></div>
+            <div class="group"><label>BE3 (m): <span id="v_be3">0.25</span></label><input type="range" id="be3" min="-2.00" max="2.00" step="0.01" value="0.25" oninput="draw()"></div>
+            <div class="group"><label>BE4 (m): <span id="v_be4">0.31</span></label><input type="range" id="be4" min="-2.00" max="2.00" step="0.01" value="0.31" oninput="draw()"></div>
+            <div class="group"><label>BE5 (m): <span id="v_be5">0.23</span></label><input type="range" id="be5" min="-2.00" max="2.00" step="0.01" value="0.23" oninput="draw()"></div>
+            <div class="group"><label>BE6 (m): <span id="v_be6">0.27</span></label><input type="range" id="be6" min="-2.00" max="2.00" step="0.01" value="0.27" oninput="draw()"></div>
+
+            <div class="panel-title">Vãos Longitudinais Esquerdos (L1 a L5)</div>
+            <div class="group"><label>L1 (P1-P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="1.5" max="5.0" step="0.05" value="3.65" oninput="draw()"></div>
+            <div class="group"><label>L2 (P3-P5) (m): <span id="v_l2">2.80</span></label><input type="range" id="l2" min="1.5" max="5.0" step="0.05" value="2.80" oninput="draw()"></div>
+            <div class="group"><label>L3 (P5-P7) (m): <span id="v_l3">3.00</span></label><input type="range" id="l3" min="1.5" max="5.0" step="0.05" value="3.00" oninput="draw()"></div>
+            <div class="group"><label>L4 (P7-P9) (m): <span id="v_l4">3.80</span></label><input type="range" id="l4" min="1.5" max="5.0" step="0.05" value="3.80" oninput="draw()"></div>
+            <div class="group"><label>L5 (P9-P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="1.5" max="5.0" step="0.05" value="3.90" oninput="draw()"></div>
+        </div>
+
+        <div class="canvas-card">
+            <canvas id="pierCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        function draw() {
+            const canvas = document.getElementById('pierCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const W = parseFloat(document.getElementById('w').value);
+            document.getElementById('v_w').innerText = W.toFixed(2);
+
+            const T = []; const BE = []; const L = [];
+            for(let i=1; i<=6; i++) {
+                T[i] = parseFloat(document.getElementById('t'+i).value);
+                BE[i] = parseFloat(document.getElementById('be'+i).value);
+                document.getElementById('v_t'+i).innerText = T[i].toFixed(2);
+                document.getElementById('v_be'+i).innerText = BE[i].toFixed(2);
+            }
+            for(let i=1; i<=5; i++) {
+                L[i] = parseFloat(document.getElementById('l'+i).value);
+                document.getElementById('v_l'+i).innerText = L[i].toFixed(2);
+            }
+
+            const scale = 75;
+            const marginX = 220; // Margem aumentada para comportar projeção de pilares negativos
+            const marginY = 120;
+
+            const totalLen = L[1] + L[2] + L[3] + L[4] + L[5];
+            canvas.width = (W * scale) + (marginX * 2);
+            canvas.height = (totalLen * scale) + (marginY * 2);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Costão Rochoso
+            ctx.fillStyle = "#cbd5e1";
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(marginX - 20, marginY - 60, (W * scale) + 40, 40);
+            ctx.fill(); ctx.stroke();
+            ctx.fillStyle = "#334155";
+            ctx.font = "bold 13px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("COSTÃO ROCHOSO (EIXO 1)", marginX + (W * scale)/2, marginY - 35);
+
+            // Vigamento Retangular Principal
+            ctx.fillStyle = "rgba(56, 189, 248, 0.08)";
+            ctx.strokeStyle = "#0284c7";
+            ctx.lineWidth = 5;
+            ctx.fillRect(marginX, marginY, W * scale, totalLen * scale);
+            ctx.strokeRect(marginX, marginY, W * scale, totalLen * scale);
+
+            // Posição vertical dos 6 eixos
+            const yEixos = [
+                marginY,
+                marginY + L[1]*scale,
+                marginY + (L[1]+L[2])*scale,
+                marginY + (L[1]+L[2]+L[3])*scale,
+                marginY + (L[1]+L[2]+L[3]+L[4])*scale,
+                marginY + totalLen*scale
+            ];
+
+            // Desenhar Vigas Transversais e Pilares P1 a P12
+            for(let i=1; i<=6; i++) {
+                const y = yEixos[i-1];
+                const pLeftX = marginX + (BE[i] * scale);
+                const pRightX = pLeftX + (T[i] * scale);
+
+                // Eixo Transversal
+                ctx.strokeStyle = "rgba(2, 132, 199, 0.4)";
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(marginX - 30, y); ctx.lineTo(marginX + W*scale + 30, y); ctx.stroke();
+
+                // Pilares (Círculos)
+                const pL_num = (i*2) - 1;
+                const pR_num = i*2;
+
+                // Destaque de cor caso pilar fique fora da viga retangular
+                ctx.fillStyle = (BE[i] < 0) ? "#dc2626" : "#0f172a";
+                ctx.beginPath(); ctx.arc(pLeftX, y, 16, 0, Math.PI*2); ctx.fill();
+
+                const BD = W - T[i] - BE[i];
+                ctx.fillStyle = (BD < 0) ? "#dc2626" : "#0f172a";
+                ctx.beginPath(); ctx.arc(pRightX, y, 16, 0, Math.PI*2); ctx.fill();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 12px sans-serif";
+                ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                ctx.fillText("P" + pL_num, pLeftX, y);
+                ctx.fillText("P" + pR_num, pRightX, y);
+
+                // Rótulos BE / BD
+                ctx.font = "bold 11px sans-serif";
+                
+                // BE
+                ctx.fillStyle = BE[i] < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillText("BE"+i+": "+BE[i].toFixed(2)+"m", pLeftX - 45, y);
+
+                // BD
+                ctx.fillStyle = BD < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillText("BD"+i+": "+BD.toFixed(2)+"m", pRightX + 45, y);
+            }
+
+            // Recorte da Escada
+            const yEixo5 = yEixos[4];
+            ctx.fillStyle = "#fef08a";
+            ctx.strokeStyle = "#eab308";
+            ctx.lineWidth = 2;
+            ctx.fillRect(marginX, yEixo5 - (2*scale), 1*scale, 2*scale);
+            ctx.strokeRect(marginX, yEixo5 - (2*scale), 1*scale, 2*scale);
+            ctx.fillStyle = "#854d0e";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("ESCADA 2x1m", marginX + (0.5*scale), yEixo5 - (1*scale));
+        }
+        window.onload = draw;
+    </script>
+</body>
+</html>
