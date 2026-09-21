@@ -42,7 +42,7 @@
         input[type=checkbox] { cursor: pointer; accent-color: #eab308; width: 16px; height: 16px; }
 
         .canvas-card { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; overflow-x: auto; }
-        canvas { background: #ffffff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; }
+        canvas { background: #0b1329; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; border: 1px solid #334155; }
 
         .action-panel { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -170,11 +170,11 @@
                 document.getElementById('v_r'+i).innerText = R[i].toFixed(2);
             }
 
-            const scale = 65;
+            const scale = 55;
             const marginX = 200;
             const marginY = 100;
 
-            // Malha de Pilares no Sistema do Eixo P2->P12
+            // Posição local dos pilares no sistema do eixo P2->P12
             const localR = [{x: 0, y: 0}];
             for(let i=1; i<=5; i++) {
                 localR[i] = { x: 0, y: localR[i-1].y + R[i] };
@@ -191,16 +191,26 @@
             canvas.width = (W * scale) + (marginX * 2);
             canvas.height = (cintamientoLen * scale) + (marginY * 2);
 
-            // Fundo Branco Claro para o Desenho
-            ctx.fillStyle = "#ffffff";
+            // Fundo escuro azul CAD com grade
+            ctx.fillStyle = "#0b1329";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Grade de fundo leve
+            ctx.strokeStyle = "rgba(51, 65, 85, 0.3)";
+            ctx.lineWidth = 1;
+            for(let x=0; x<canvas.width; x+=25) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y=0; y<canvas.height; y+=25) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
 
             const xCintRight = marginX + (W * scale);
             const xCintLeft = marginX;
             const yCintTop = marginY;
             const yCintBottom = yCintTop + (cintamentoLen * scale);
 
-            // Calcular Pilares no Mundo
+            // Translação mundo
             const p2_X = xCintRight - (BD2_ref * scale);
             const p2_Y = yCintTop + (Y0_ref * scale);
 
@@ -216,7 +226,7 @@
             const worldR = localR.map(transformPoint);
             const worldL = localL.map(transformPoint);
 
-            // Validação do Cintamento
+            // Validação estrutural do encoframento
             let isAllSupported = true;
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
@@ -228,7 +238,7 @@
                 }
             }
 
-            // Atualizar Banner
+            // Banner
             const banner = document.getElementById('statusBanner');
             if(banner) {
                 if(isAllSupported) {
@@ -240,27 +250,27 @@
                 }
             }
 
-            // Desenhar Costão
+            // Costão Rochoso
             ctx.fillStyle = "#cbd5e1";
             ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.rect(marginX - 30, yCintTop - 45, (W * scale) + 60, 35);
             ctx.fill(); ctx.stroke();
-            ctx.fillStyle = "#334155";
+            ctx.fillStyle = "#0f172a";
             ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("COSTÃO ROCHOSO (TERRA)", marginX + (W * scale)/2, yCintTop - 22);
 
-            // Desenhar Cintamento
+            // Cintamento Retangular
             if(isAllSupported) {
-                ctx.fillStyle = "rgba(56, 189, 248, 0.12)";
-                ctx.strokeStyle = "#0284c7";
+                ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
+                ctx.strokeStyle = "#38bdf8";
             } else {
-                ctx.fillStyle = "rgba(239, 68, 68, 0.2)";
-                ctx.strokeStyle = "#dc2626";
+                ctx.fillStyle = "rgba(239, 68, 68, 0.25)";
+                ctx.strokeStyle = "#ef4444";
             }
-            ctx.lineWidth = 5;
+            ctx.lineWidth = 4;
             ctx.fillRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
             ctx.strokeRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
 
@@ -278,7 +288,7 @@
             }
 
             // Linha Eixo P2-P12
-            ctx.strokeStyle = "#eab308";
+            ctx.strokeStyle = "#f59e0b";
             ctx.lineWidth = 2;
             ctx.setLineDash([6, 6]);
             ctx.beginPath();
@@ -295,7 +305,7 @@
                 const BE_i = (pL.x - xCintLeft) / scale;
                 const BD_i = (xCintRight - pR.x) / scale;
 
-                ctx.strokeStyle = "rgba(2, 132, 199, 0.5)";
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.6)";
                 ctx.lineWidth = 2;
                 ctx.beginPath(); ctx.moveTo(pL.x, pL.y); ctx.lineTo(pR.x, pR.y); ctx.stroke();
 
@@ -304,14 +314,14 @@
 
                 // Pilar Esquerdo
                 ctx.fillStyle = (BE_i < 0) ? "#ef4444" : "#0f172a";
-                ctx.beginPath(); ctx.arc(pL.x, pL.y, 15, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = (BE_i < 0) ? "#ef4444" : "#0284c7";
+                ctx.beginPath(); ctx.arc(pL.x, pL.y, 14, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = (BE_i < 0) ? "#fca5a5" : "#38bdf8";
                 ctx.lineWidth = 2; ctx.stroke();
 
                 // Pilar Direito
                 ctx.fillStyle = (BD_i < 0) ? "#ef4444" : "#0f172a";
-                ctx.beginPath(); ctx.arc(pR.x, pR.y, 15, 0, Math.PI*2); ctx.fill();
-                ctx.strokeStyle = (BD_i < 0) ? "#ef4444" : "#0284c7";
+                ctx.beginPath(); ctx.arc(pR.x, pR.y, 14, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = (BD_i < 0) ? "#fca5a5" : "#38bdf8";
                 ctx.lineWidth = 2; ctx.stroke();
 
                 ctx.fillStyle = "#ffffff";
@@ -321,10 +331,10 @@
                 ctx.fillText("P" + pR_num, pR.x, pR.y);
 
                 ctx.font = "bold 10px sans-serif";
-                ctx.fillStyle = BE_i < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillStyle = BE_i < 0 ? "#ef4444" : "#38bdf8";
                 ctx.fillText("BE"+(i+1)+": "+BE_i.toFixed(2)+"m", pL.x - 42, pL.y);
 
-                ctx.fillStyle = BD_i < 0 ? "#dc2626" : "#0284c7";
+                ctx.fillStyle = BD_i < 0 ? "#ef4444" : "#38bdf8";
                 ctx.fillText("BD"+(i+1)+": "+BD_i.toFixed(2)+"m", pR.x + 42, pR.y);
             }
         }
@@ -395,9 +405,8 @@
             }
         }
 
-        window.onload = function() {
-            draw();
-        };
+        document.addEventListener('DOMContentLoaded', draw);
+        window.onload = draw;
     </script>
 </body>
 </html>
