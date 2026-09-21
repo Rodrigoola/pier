@@ -58,7 +58,7 @@
 </head>
 <body>
     <h1>Simulador de Cintamento de Píer</h1>
-    <p class="subtitle">Triangulação de Pilares Medidos + Desvios de Linha Guia + Fôrma Retangular Ajustável</p>
+    <p class="subtitle">Medidas Iniciais do Croqui do Campo Carregadas</p>
     
     <div class="container">
         <!-- BANNER DE STATUS DO CINTAMENTO -->
@@ -86,15 +86,15 @@
                 <input type="range" id="y0" min="0.00" max="2.00" step="0.05" value="0.50" oninput="draw()">
             </div>
 
-            <!-- OPÇÕES DA ESCADA -->
+            <!-- OPÇÕES DA ESCADA (ENTRE P7 E P9) -->
             <div class="panel-title">2. Configuração do Recorte da Escada (2.00m x 1.00m)</div>
             <div class="group stair-group" style="display: flex; align-items: center; justify-content: space-between;">
                 <label style="margin: 0; cursor: pointer;" for="hasStair">Ativar Recorte da Escada?</label>
                 <input type="checkbox" id="hasStair" checked onchange="draw()">
             </div>
             <div class="group stair-group">
-                <label>Posição da Escada (Eixo Y) (m): <span id="v_stairY">12.00</span></label>
-                <input type="range" id="stairY" min="0.0" max="20.0" step="0.2" value="12.00" oninput="draw()">
+                <label>Posição da Escada (Eixo Y) (m): <span id="v_stairY">9.90</span></label>
+                <input type="range" id="stairY" min="0.0" max="20.0" step="0.1" value="9.90" oninput="draw()">
             </div>
 
             <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) -->
@@ -104,26 +104,28 @@
             <div class="group dev-group"><label>Desvio P8 (m): <span id="v_dev8">0.00</span></label><input type="range" id="dev8" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P10 (m): <span id="v_dev10">0.00</span></label><input type="range" id="dev10" min="-0.50" max="0.50" step="0.01" value="0.00" oninput="draw()"></div>
 
-            <!-- MEASURED SPANS (CALIBRADOS EM ±20cm DOS VALORES REAIS) -->
-            <div class="panel-title">4. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste máximo ±20cm]</div>
-            <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.99</span></label><input type="range" id="t1" min="3.79" max="4.19" step="0.01" value="3.99" oninput="draw()"></div>
-            <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.73</span></label><input type="range" id="t2" min="3.53" max="3.93" step="0.01" value="3.73" oninput="draw()"></div>
-            <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.84</span></label><input type="range" id="t3" min="3.64" max="4.04" step="0.01" value="3.84" oninput="draw()"></div>
-            <div class="group"><label>T4 (P7-P8) (m): <span id="v_t4">3.87</span></label><input type="range" id="t4" min="3.67" max="4.07" step="0.01" value="3.87" oninput="draw()"></div>
-            <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">3.95</span></label><input type="range" id="t5" min="3.75" max="4.15" step="0.01" value="3.95" oninput="draw()"></div>
-            <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">3.87</span></label><input type="range" id="t6" min="3.67" max="4.07" step="0.01" value="3.87" oninput="draw()"></div>
+            <!-- VÃOS TRANSVERSAIS REAIS DO CROQUI (T1 a T6) -->
+            <div class="panel-title">4. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste ±20cm]</div>
+            <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
+            <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.76</span></label><input type="range" id="t2" min="3.56" max="3.96" step="0.01" value="3.76" oninput="draw()"></div>
+            <div class="group"><label>T3 (P5-P6) (m): <span id="v_t3">3.78</span></label><input type="range" id="t3" min="3.58" max="3.98" step="0.01" value="3.78" oninput="draw()"></div>
+            <div class="group"><label>T4 (P7-P8) (m): <span id="v_t4">3.96</span></label><input type="range" id="t4" min="3.76" max="4.16" step="0.01" value="3.96" oninput="draw()"></div>
+            <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">4.07</span></label><input type="range" id="t5" min="3.87" max="4.27" step="0.01" value="4.07" oninput="draw()"></div>
+            <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">4.33</span></label><input type="range" id="t6" min="4.13" max="4.53" step="0.01" value="4.33" oninput="draw()"></div>
 
-            <div class="panel-title">5. Vãos Longitudinais ESQUERDOS Fixos (L1 a L5 - P1→P11) [Ajuste máximo ±20cm]</div>
-            <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.70</span></label><input type="range" id="l1" min="3.50" max="3.90" step="0.01" value="3.70" oninput="draw()"></div>
-            <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.65</span></label><input type="range" id="l2" min="2.45" max="2.85" step="0.01" value="2.65" oninput="draw()"></div>
+            <!-- VÃOS LONGITUDINAIS ESQUERDOS / COSTÃO (L1 a L5) -->
+            <div class="panel-title">5. Vãos Longitudinais ESQUERDOS / Costão (L1 a L5) [Ajuste ±20cm]</div>
+            <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
+            <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.75</span></label><input type="range" id="l2" min="2.55" max="2.95" step="0.01" value="2.75" oninput="draw()"></div>
             <div class="group"><label>L3 (P5→P7) (m): <span id="v_l3">3.00</span></label><input type="range" id="l3" min="2.80" max="3.20" step="0.01" value="3.00" oninput="draw()"></div>
-            <div class="group"><label>L4 (P7→P9) (m): <span id="v_l4">3.80</span></label><input type="range" id="l4" min="3.60" max="4.00" step="0.01" value="3.80" oninput="draw()"></div>
+            <div class="group"><label>L4 (P7→P9) (m): <span id="v_l4">3.55</span></label><input type="range" id="l4" min="3.35" max="3.75" step="0.01" value="3.55" oninput="draw()"></div>
             <div class="group"><label>L5 (P9→P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
 
-            <div class="panel-title">6. Vãos Longitudinais DIREITOS Fixos (R1 a R5 - P2→P12) [Ajuste máximo ±20cm]</div>
-            <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.15</span></label><input type="range" id="r1" min="2.95" max="3.35" step="0.01" value="3.15" oninput="draw()"></div>
-            <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">1.50</span></label><input type="range" id="r2" min="1.30" max="1.70" step="0.01" value="1.50" oninput="draw()"></div>
-            <div class="group"><label>R3 (P6→P8) (m): <span id="v_r3">1.50</span></label><input type="range" id="r3" min="1.30" max="1.70" step="0.01" value="1.50" oninput="draw()"></div>
+            <!-- VÃOS LONGITUDINAIS DIREITOS / MAR (R1 a R5) -->
+            <div class="panel-title">6. Vãos Longitudinais DIREITOS / Mar (R1 a R5) [Ajuste ±20cm]</div>
+            <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.65</span></label><input type="range" id="r1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
+            <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">2.80</span></label><input type="range" id="r2" min="2.60" max="3.00" step="0.01" value="2.80" oninput="draw()"></div>
+            <div class="group"><label>R3 (P6→P8) (m): <span id="v_r3">3.00</span></label><input type="range" id="r3" min="2.80" max="3.20" step="0.01" value="3.00" oninput="draw()"></div>
             <div class="group"><label>R4 (P8→P10) (m): <span id="v_r4">3.80</span></label><input type="range" id="r4" min="3.60" max="4.00" step="0.01" value="3.80" oninput="draw()"></div>
             <div class="group"><label>R5 (P10→P12) (m): <span id="v_r5">3.90</span></label><input type="range" id="r5" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
         </div>
@@ -160,14 +162,13 @@
             const hasStair = document.getElementById('hasStair').checked;
             const stairY = parseFloat(document.getElementById('stairY').value);
 
-            // Desvios dos pilares pares em relação à linha esticada P2-P12
             const dev = [
-                0, // P2 colado na linha
+                0,
                 parseFloat(document.getElementById('dev4').value),
                 parseFloat(document.getElementById('dev6').value),
                 parseFloat(document.getElementById('dev8').value),
                 parseFloat(document.getElementById('dev10').value),
-                0  // P12 colado na linha
+                0
             ];
 
             document.getElementById('v_w').innerText = W.toFixed(2);
@@ -196,7 +197,6 @@
             ctx.fillStyle = "#0b1329";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Grade de fundo
             ctx.strokeStyle = "rgba(51, 65, 85, 0.25)";
             ctx.lineWidth = 1;
             for(let x=0; x<canvas.width; x+=30) {
@@ -208,13 +208,13 @@
 
             const scale = 50;
 
-            // 1. Pilares Pares (P2 ao P12) com desvio em relação à linha guia
+            // 1. Pilares Pares
             const localR = [{x: dev[0], y: 0}];
             for(let i=1; i<=5; i++) {
                 localR[i] = { x: dev[i], y: localR[i-1].y + R[i] };
             }
 
-            // 2. Trilateração dos Pilares Ímpares (P1 ao P11)
+            // 2. Trilateração dos Pilares Ímpares
             const localL = [{ x: localR[0].x - T[1], y: 0 }];
 
             for(let i=1; i<6; i++) {
@@ -223,8 +223,8 @@
                 const xB = localR[i].x;
                 const yB = localR[i].y;
 
-                const rA = L[i];    // Vão L
-                const rB = T[i+1];  // Vão T
+                const rA = L[i];
+                const rB = T[i+1];
 
                 const d = Math.hypot(xB - xA, yB - yA);
 
@@ -246,7 +246,6 @@
                 }
             }
 
-            // Geometria da Fôrma do Cintamento (Retângulo Perfeito)
             const maxLenR = localR[5].y;
             const cintamentoLen = maxLenR + Y0_ref + 0.80; 
             const xCintLeft = 200;
@@ -254,7 +253,6 @@
             const yCintTop = 100;
             const yCintBottom = yCintTop + (cintamentoLen * scale);
 
-            // Translação / Rotação para o Mundo no Canvas
             const p2_X = xCintRight - (BD2_ref * scale);
             const p2_Y = yCintTop + (Y0_ref * scale);
 
@@ -270,7 +268,6 @@
             const worldR = localR.map(transformPoint);
             const worldL = localL.map(transformPoint);
 
-            // Validação de apoio
             let isAllSupported = true;
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
@@ -282,7 +279,6 @@
                 }
             }
 
-            // Banner
             const banner = document.getElementById('statusBanner');
             if(banner) {
                 if(isAllSupported) {
@@ -331,7 +327,7 @@
                 ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), stairY_canvas + (1*scale));
             }
 
-            // LINHA GUIA VIRTUAL AMARELA (ESTICADA DO P2 AO P12)
+            // LINHA GUIA VIRTUAL AMARELA
             const p2_World = worldR[0];
             const p12_World = worldR[5];
             ctx.strokeStyle = "#f59e0b";
@@ -343,7 +339,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Vigas Transversais de Ligação e Pilares
+            // Vigas e Pilares
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
                 const pR = worldR[i];
