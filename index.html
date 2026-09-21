@@ -42,7 +42,7 @@
         input[type=checkbox] { cursor: pointer; accent-color: #eab308; width: 16px; height: 16px; }
 
         .canvas-card { background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; overflow-x: auto; }
-        canvas { background: #0b1329; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; touch-action: none; border: 1px solid #334155; }
+        canvas { background: #0b1329; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: block; margin: 0 auto; border: 1px solid #334155; }
 
         .action-panel { background: #1e293b; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
         .btn-group { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -133,7 +133,7 @@
         </div>
 
         <div class="canvas-card">
-            <canvas id="pierCanvas"></canvas>
+            <canvas id="pierCanvas" width="800" height="1200"></canvas>
         </div>
     </div>
 
@@ -170,11 +170,28 @@
                 document.getElementById('v_r'+i).innerText = R[i].toFixed(2);
             }
 
-            const scale = 55;
-            const marginX = 200;
-            const marginY = 100;
+            // Fundo CAD
+            ctx.fillStyle = "#0b1329";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Posição local dos pilares no sistema do eixo P2->P12
+            // Grade de fundo
+            ctx.strokeStyle = "rgba(51, 65, 85, 0.25)";
+            ctx.lineWidth = 1;
+            for(let x=0; x<canvas.width; x+=30) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y=0; y<canvas.height; y+=30) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            const scale = 50;
+            const cintamentoLen = 17.5 + Y0_ref + 0.8; 
+            const xCintLeft = 200;
+            const xCintRight = xCintLeft + (W * scale);
+            const yCintTop = 100;
+            const yCintBottom = yCintTop + (cintamentoLen * scale);
+
+            // Coordenadas Locais dos Pilares
             const localR = [{x: 0, y: 0}];
             for(let i=1; i<=5; i++) {
                 localR[i] = { x: 0, y: localR[i-1].y + R[i] };
@@ -185,32 +202,7 @@
                 localL[i] = { x: -T[i+1], y: localR[i].y };
             }
 
-            const maxLenR = localR[5].y;
-            const cintamientoLen = maxLenR + Y0_ref + 0.80;
-
-            canvas.width = (W * scale) + (marginX * 2);
-            canvas.height = (cintamientoLen * scale) + (marginY * 2);
-
-            // Fundo escuro azul CAD com grade
-            ctx.fillStyle = "#0b1329";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Grade de fundo leve
-            ctx.strokeStyle = "rgba(51, 65, 85, 0.3)";
-            ctx.lineWidth = 1;
-            for(let x=0; x<canvas.width; x+=25) {
-                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
-            }
-            for(let y=0; y<canvas.height; y+=25) {
-                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
-            }
-
-            const xCintRight = marginX + (W * scale);
-            const xCintLeft = marginX;
-            const yCintTop = marginY;
-            const yCintBottom = yCintTop + (cintamentoLen * scale);
-
-            // Translação mundo
+            // Ponto de Ancoragem P2 no Mundo
             const p2_X = xCintRight - (BD2_ref * scale);
             const p2_Y = yCintTop + (Y0_ref * scale);
 
@@ -226,7 +218,7 @@
             const worldR = localR.map(transformPoint);
             const worldL = localL.map(transformPoint);
 
-            // Validação estrutural do encoframento
+            // Validação de apoio
             let isAllSupported = true;
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
@@ -238,7 +230,7 @@
                 }
             }
 
-            // Banner
+            // Atualizar Banner
             const banner = document.getElementById('statusBanner');
             if(banner) {
                 if(isAllSupported) {
@@ -251,18 +243,18 @@
             }
 
             // Costão Rochoso
-            ctx.fillStyle = "#cbd5e1";
-            ctx.strokeStyle = "#64748b";
+            ctx.fillStyle = "#94a3b8";
+            ctx.strokeStyle = "#475569";
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.rect(marginX - 30, yCintTop - 45, (W * scale) + 60, 35);
+            ctx.rect(xCintLeft - 40, yCintTop - 45, (W * scale) + 80, 35);
             ctx.fill(); ctx.stroke();
             ctx.fillStyle = "#0f172a";
             ctx.font = "bold 12px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("COSTÃO ROCHOSO (TERRA)", marginX + (W * scale)/2, yCintTop - 22);
+            ctx.fillText("COSTÃO ROCHOSO (TERRA)", xCintLeft + (W * scale)/2, yCintTop - 22);
 
-            // Cintamento Retangular
+            // Cintamento
             if(isAllSupported) {
                 ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
                 ctx.strokeStyle = "#38bdf8";
@@ -287,7 +279,7 @@
                 ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), stairY_canvas + (1*scale));
             }
 
-            // Linha Eixo P2-P12
+            // Linha Guia P2->P12
             ctx.strokeStyle = "#f59e0b";
             ctx.lineWidth = 2;
             ctx.setLineDash([6, 6]);
@@ -297,7 +289,7 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Desenhar Vigas e Pilares
+            // Vigas Transversais e Pilares
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
                 const pR = worldR[i];
@@ -405,7 +397,6 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', draw);
         window.onload = draw;
     </script>
 </body>
