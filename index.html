@@ -62,7 +62,7 @@
 </head>
 <body>
     <h1>Simulador de Cintamento de Píer</h1>
-    <p class="subtitle">Medidas Iniciais do Croqui do Campo Carregadas</p>
+    <p class="subtitle">Análise Geométrica e Estrutural em Tempo Real</p>
     
     <div class="container">
         <!-- BANNER DE STATUS DO CINTAMENTO -->
@@ -101,7 +101,7 @@
                 <input type="range" id="devY1" min="-1.50" max="1.50" step="0.01" value="0.00" oninput="draw()">
             </div>
 
-            <!-- OPÇÕES DA ESCADA (ENTRE P7 E P9) -->
+            <!-- OPÇÕES DA ESCADA -->
             <div class="panel-title">3. Configuração do Recorte da Escada (2.00m x 1.00m)</div>
             <div class="group stair-group" style="display: flex; align-items: center; justify-content: space-between;">
                 <label style="margin: 0; cursor: pointer;" for="hasStair">Ativar Recorte da Escada?</label>
@@ -112,14 +112,15 @@
                 <input type="range" id="stairY" min="0.0" max="20.0" step="0.1" value="9.90" oninput="draw()">
             </div>
 
-            <!-- DESVIOS DA LINHA GUIA AMARELA (P4, P6, P8, P10) -->
+            <!-- DESVIOS DA LINHA GUIA AMARELA -->
             <div class="panel-title">4. Desvio dos Pilares Pares em Relação à Linha P2-P12 (m) [Até ±2.00m]</div>
+            <div class="group dev-group"><label>Desvio P2 (m): <span id="v_dev2">0.00</span></label><input type="range" id="dev2" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P4 (m): <span id="v_dev4">0.00</span></label><input type="range" id="dev4" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P6 (m): <span id="v_dev6">0.00</span></label><input type="range" id="dev6" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P8 (m): <span id="v_dev8">0.00</span></label><input type="range" id="dev8" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
             <div class="group dev-group"><label>Desvio P10 (m): <span id="v_dev10">0.00</span></label><input type="range" id="dev10" min="-2.00" max="2.00" step="0.01" value="0.00" oninput="draw()"></div>
 
-            <!-- VÃOS TRANSVERSAIS REAIS DO CROQUI (T1 a T6) -->
+            <!-- VÃOS TRANSVERSAIS REAIS DO CROQUI -->
             <div class="panel-title">5. Vãos Transversais Medidos Fixos (T1 a T6) [Ajuste ±20cm]</div>
             <div class="group"><label>T1 (P1-P2) (m): <span id="v_t1">3.90</span></label><input type="range" id="t1" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
             <div class="group"><label>T2 (P3-P4) (m): <span id="v_t2">3.76</span></label><input type="range" id="t2" min="3.56" max="3.96" step="0.01" value="3.76" oninput="draw()"></div>
@@ -128,7 +129,7 @@
             <div class="group"><label>T5 (P9-P10) (m): <span id="v_t5">4.07</span></label><input type="range" id="t5" min="3.87" max="4.27" step="0.01" value="4.07" oninput="draw()"></div>
             <div class="group"><label>T6 (P11-P12) (m): <span id="v_t6">4.33</span></label><input type="range" id="t6" min="4.13" max="4.53" step="0.01" value="4.33" oninput="draw()"></div>
 
-            <!-- VÃOS LONGITUDINAIS ESQUERDOS / COSTÃO (L1 a L5) -->
+            <!-- VÃOS LONGITUDINAIS ESQUERDOS / COSTÃO -->
             <div class="panel-title">6. Vãos Longitudinais ESQUERDOS / Costão (L1 a L5) [Ajuste ±20cm]</div>
             <div class="group"><label>L1 (P1→P3) (m): <span id="v_l1">3.65</span></label><input type="range" id="l1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
             <div class="group"><label>L2 (P3→P5) (m): <span id="v_l2">2.75</span></label><input type="range" id="l2" min="2.55" max="2.95" step="0.01" value="2.75" oninput="draw()"></div>
@@ -136,7 +137,7 @@
             <div class="group"><label>L4 (P7→P9) (m): <span id="v_l4">3.55</span></label><input type="range" id="l4" min="3.35" max="3.75" step="0.01" value="3.55" oninput="draw()"></div>
             <div class="group"><label>L5 (P9→P11) (m): <span id="v_l5">3.90</span></label><input type="range" id="l5" min="3.70" max="4.10" step="0.01" value="3.90" oninput="draw()"></div>
 
-            <!-- VÃOS LONGITUDINAIS DIREITOS / MAR (R1 a R5) -->
+            <!-- VÃOS LONGITUDINAIS DIREITOS / MAR -->
             <div class="panel-title">7. Vãos Longitudinais DIREITOS / Mar (R1 a R5) [Ajuste ±20cm]</div>
             <div class="group"><label>R1 (P2→P4) (m): <span id="v_r1">3.65</span></label><input type="range" id="r1" min="3.45" max="3.85" step="0.01" value="3.65" oninput="draw()"></div>
             <div class="group"><label>R2 (P4→P6) (m): <span id="v_r2">2.80</span></label><input type="range" id="r2" min="2.60" max="3.00" step="0.01" value="2.80" oninput="draw()"></div>
@@ -160,7 +161,7 @@
         <div class="canvas-card">
             <div class="tabs">
                 <button id="btnPlan" class="tab-btn active" onclick="switchView('plan')">Planta Baixa (Locação)</button>
-                <button id="btnProfile" class="tab-btn" onclick="switchView('profile')">Vista de Perfil (Corte Transversal)</button>
+                <button id="btnProfile" class="tab-btn" onclick="switchView('profile')">Vista de Perfil (Corte Transversal Detalhado)</button>
             </div>
             <canvas id="pierCanvas" width="850" height="1200"></canvas>
         </div>
@@ -202,7 +203,7 @@
             const stairY = parseFloat(document.getElementById('stairY').value);
 
             const dev = [
-                0,
+                parseFloat(document.getElementById('dev2').value),
                 parseFloat(document.getElementById('dev4').value),
                 parseFloat(document.getElementById('dev6').value),
                 parseFloat(document.getElementById('dev8').value),
@@ -217,6 +218,7 @@
             document.getElementById('v_y0').innerText = Y0_ref.toFixed(2);
             document.getElementById('v_devY1').innerText = devY1.toFixed(2);
             document.getElementById('v_stairY').innerText = stairY.toFixed(2);
+            document.getElementById('v_dev2').innerText = dev[0].toFixed(2);
             document.getElementById('v_dev4').innerText = dev[1].toFixed(2);
             document.getElementById('v_dev6').innerText = dev[2].toFixed(2);
             document.getElementById('v_dev8').innerText = dev[3].toFixed(2);
@@ -234,7 +236,6 @@
                 document.getElementById('v_r'+i).innerText = R[i].toFixed(2);
             }
 
-            // Fundo CAD
             ctx.fillStyle = "#0b1329";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -249,13 +250,11 @@
 
             const scale = 50;
 
-            // 1. Pilares Pares (P2 ao P12)
             const localR = [{x: dev[0], y: 0}];
             for(let i=1; i<=5; i++) {
                 localR[i] = { x: dev[i], y: localR[i-1].y + R[i] };
             }
 
-            // 2. Trilateração dos Pilares Ímpares com Deslocamento Longitudinal devY1 no P1
             const localL = [{ x: localR[0].x - T[1], y: devY1 }];
 
             for(let i=1; i<6; i++) {
@@ -331,7 +330,6 @@
                 }
             }
 
-            // Costão Rochoso
             ctx.fillStyle = "#94a3b8";
             ctx.strokeStyle = "#475569";
             ctx.lineWidth = 2;
@@ -343,7 +341,6 @@
             ctx.textAlign = "center";
             ctx.fillText("COSTÃO ROCHOSO (TERRA)", xCintLeft + (W * scale)/2, yCintTop - 22);
 
-            // Cintamento
             if(isAllSupported) {
                 ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
                 ctx.strokeStyle = "#38bdf8";
@@ -355,7 +352,6 @@
             ctx.fillRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
             ctx.strokeRect(xCintLeft, yCintTop, W * scale, cintamentoLen * scale);
 
-            // Escada
             if(hasStair) {
                 const stairY_canvas = yCintTop + (stairY * scale);
                 ctx.fillStyle = "#fef08a";
@@ -368,7 +364,6 @@
                 ctx.fillText("ESCADA 2x1m", xCintLeft + (0.5*scale), stairY_canvas + (1*scale));
             }
 
-            // LINHA GUIA VIRTUAL AMARELA
             const p2_World = worldR[0];
             const p12_World = worldR[5];
             ctx.strokeStyle = "#f59e0b";
@@ -380,7 +375,6 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Desenhar Linhas e Cotas Longitudinais Esquerdas (L1 - L5)
             ctx.strokeStyle = "rgba(148, 163, 184, 0.5)";
             ctx.lineWidth = 1.5;
             for(let i=0; i<5; i++) {
@@ -396,7 +390,6 @@
                 ctx.fillText(`L${i+1}: ${L[i+1].toFixed(2)}m`, midX - 12, midY);
             }
 
-            // Desenhar Linhas e Cotas Longitudinais Direitas (R1 - R5)
             for(let i=0; i<5; i++) {
                 const pA = worldR[i];
                 const pB = worldR[i+1];
@@ -410,7 +403,6 @@
                 ctx.fillText(`R${i+1}: ${R[i+1].toFixed(2)}m`, midX + 12, midY);
             }
 
-            // Vigas Transversais, Cotas T e Pilares
             for(let i=0; i<6; i++) {
                 const pL = worldL[i];
                 const pR = worldR[i];
@@ -460,22 +452,22 @@
         function drawProfileView() {
             const canvas = document.getElementById('pierCanvas');
             if(!canvas) return;
-            canvas.height = 500;
+            canvas.height = 580;
             const ctx = canvas.getContext('2d');
 
             const W = parseFloat(document.getElementById('w').value);
 
-            ctx.fillStyle = "#0b1329";
+            ctx.fillStyle = "#090f21";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.strokeStyle = "rgba(51, 65, 85, 0.25)";
+            ctx.strokeStyle = "rgba(51, 65, 85, 0.2)";
             ctx.lineWidth = 1;
             for(let x=0; x<canvas.width; x+=20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
             for(let y=0; y<canvas.height; y+=20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
 
-            const scaleP = 130;
-            const startX = 110;
-            const startY = 280;
+            const scaleP = 135;
+            const startX = 120;
+            const startY = 320;
 
             const widthPx = W * scaleP;
             const beamW_px = 0.20 * scaleP;
@@ -487,9 +479,46 @@
             ctx.fillStyle = "#38bdf8";
             ctx.font = "bold 15px sans-serif";
             ctx.textAlign = "left";
-            ctx.fillText(`CORTE TRANSVERSAL DA SUPERESTRUTURA - LARGURA TOTAL: ${W.toFixed(2)}m`, 30, 40);
+            ctx.fillText(`CORTE TRANSVERSAL DETALHADO DA SUPERESTRUTURA`, 30, 35);
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "12px sans-serif";
+            ctx.fillText(`Largura Total do Deck: ${W.toFixed(2)}m | Viga de Cintamento: 20cm x 28cm`, 30, 55);
 
-            ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+            ctx.fillStyle = "rgba(14, 116, 144, 0.25)";
+            ctx.fillRect(0, startY + beamH_px + 60, canvas.width, 100);
+            ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+            ctx.beginPath(); ctx.moveTo(0, startY + beamH_px + 60); ctx.lineTo(canvas.width, startY + beamH_px + 60); ctx.stroke();
+            ctx.fillStyle = "#38bdf8";
+            ctx.font = "italic 11px sans-serif";
+            ctx.fillText("NÍVEL DO MAR / MÁXIMA MARÉ", 30, startY + beamH_px + 80);
+
+            // Pilares de Apoio em Concreto
+            ctx.fillStyle = "#334155";
+            ctx.strokeStyle = "#64748b";
+            ctx.lineWidth = 2;
+            ctx.fillRect(startX - 10, startY + beamH_px, beamW_px + 20, 150);
+            ctx.strokeRect(startX - 10, startY + beamH_px, beamW_px + 20, 150);
+            ctx.fillRect(startX + widthPx - beamW_px - 10, startY + beamH_px, beamW_px + 20, 150);
+            ctx.strokeRect(startX + widthPx - beamW_px - 10, startY + beamH_px, beamW_px + 20, 150);
+
+            ctx.fillStyle = "#e2e8f0";
+            ctx.font = "bold 11px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("PILAR P_ímpar", startX + beamW_px/2, startY + beamH_px + 40);
+            ctx.fillText("PILAR P_par", startX + widthPx - beamW_px/2, startY + beamH_px + 40);
+
+            // Viga Transversal de Ligação (Travessão de Concreto)
+            ctx.fillStyle = "rgba(30, 41, 59, 0.9)";
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 2;
+            ctx.fillRect(startX + beamW_px, startY + 10, widthPx - (2*beamW_px), beamH_px - 10);
+            ctx.strokeRect(startX + beamW_px, startY + 10, widthPx - (2*beamW_px), beamH_px - 10);
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "10px sans-serif";
+            ctx.fillText("VIGA TRANSVERSAL DE TRAVAMENTO", startX + widthPx/2, startY + beamH_px/2 + 5);
+
+            // Vigas de Cintamento do Encoframento
+            ctx.fillStyle = "rgba(56, 189, 248, 0.35)";
             ctx.strokeStyle = "#38bdf8";
             ctx.lineWidth = 3;
 
@@ -499,22 +528,22 @@
             ctx.fillRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
             ctx.strokeRect(startX + widthPx - beamW_px, startY, beamW_px, beamH_px);
 
-            ctx.fillStyle = "#1e293b";
-            ctx.strokeStyle = "#64748b";
-            ctx.lineWidth = 2;
-            ctx.fillRect(startX - 15, startY + beamH_px, beamW_px + 30, 100);
-            ctx.strokeRect(startX - 15, startY + beamH_px, beamW_px + 30, 100);
-            ctx.fillRect(startX + widthPx - beamW_px - 15, startY + beamH_px, beamW_px + 30, 100);
-            ctx.strokeRect(startX + widthPx - beamW_px - 15, startY + beamH_px, beamW_px + 30, 100);
+            // Detalhes da Armadura de Aço Interna das Vigas (Estribos e Vergalhões)
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(startX + 4, startY + 4, beamW_px - 8, beamH_px - 8);
+            ctx.strokeRect(startX + widthPx - beamW_px + 4, startY + 4, beamW_px - 8, beamH_px - 8);
 
-            ctx.fillStyle = "#cbd5e1";
-            ctx.font = "11px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("PILAR P_ímpar", startX + beamW_px/2, startY + beamH_px + 50);
-            ctx.fillText("PILAR P_par", startX + widthPx - beamW_px/2, startY + beamH_px + 50);
+            ctx.fillStyle = "#ef4444";
+            const dotsL = [{x: startX + 6, y: startY + 6}, {x: startX + beamW_px - 6, y: startY + 6}, {x: startX + 6, y: startY + beamH_px - 6}, {x: startX + beamW_px - 6, y: startY + beamH_px - 6}];
+            dotsL.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, 2.5, 0, Math.PI*2); ctx.fill(); });
 
-            ctx.fillStyle = "#f59e0b";
-            ctx.strokeStyle = "#78350f";
+            const dotsR = [{x: startX + widthPx - beamW_px + 6, y: startY + 6}, {x: startX + widthPx - 6, y: startY + 6}, {x: startX + widthPx - beamW_px + 6, y: startY + beamH_px - 6}, {x: startX + widthPx - 6, y: startY + beamH_px - 6}];
+            dotsR.forEach(d => { ctx.beginPath(); ctx.arc(d.x, d.y, 2.5, 0, Math.PI*2); ctx.fill(); });
+
+            // Paginação do Deck de Madeira (7 cm x 2 cm)
+            ctx.fillStyle = "#d97706";
+            ctx.strokeStyle = "#451a03";
             ctx.lineWidth = 1;
 
             let currX = 0;
@@ -529,21 +558,35 @@
                 countPlanks++;
             }
 
+            // Cotas e Rótulos Técnicos
             ctx.fillStyle = "#f8fafc";
-            ctx.font = "bold 12px sans-serif";
+            ctx.font = "bold 11px sans-serif";
             ctx.textAlign = "center";
 
-            ctx.fillText("20 cm", startX + beamW_px/2, startY + beamH_px/2);
-            ctx.fillText("20 cm", startX + widthPx - beamW_px/2, startY + beamH_px/2);
+            ctx.fillText("20cm", startX + beamW_px/2, startY + beamH_px/2 - 4);
+            ctx.fillText("20cm", startX + widthPx - beamW_px/2, startY + beamH_px/2 - 4);
 
             ctx.textAlign = "right";
-            ctx.fillText("28 cm", startX - 10, startY + beamH_px/2);
+            ctx.fillText("28 cm", startX - 12, startY + beamH_px/2);
+
+            // Cotas Gerais com Linhas de Cota em Amarelo
+            ctx.strokeStyle = "#f59e0b";
+            ctx.lineWidth = 1.5;
+            const dimY = startY - plankH_px - 20;
+            ctx.beginPath(); ctx.moveTo(startX, dimY); ctx.lineTo(startX + widthPx, dimY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(startX, dimY - 5); ctx.lineTo(startX, dimY + 5); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(startX + widthPx, dimY - 5); ctx.lineTo(startX + widthPx, dimY + 5); ctx.stroke();
+
+            ctx.fillStyle = "#f59e0b";
+            ctx.font = "bold 12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(`LARGURA TOTAL DO CINTAMENTO: ${W.toFixed(2)}m`, startX + widthPx/2, dimY - 8);
 
             ctx.fillStyle = "#f59e0b";
             ctx.textAlign = "left";
-            ctx.fillText(`• Réguas de Madeira: 7 cm x 2 cm (Espaçamento: 2 cm)`, 30, 80);
-            ctx.fillText(`• Total de Réguas no Deck Transversal: ${countPlanks} peças simultâneas`, 30, 105);
-            ctx.fillText(`• Vigas de Cintamento Lateral: 20 cm de largura x 28 cm de profundidade`, 30, 130);
+            ctx.font = "12px sans-serif";
+            ctx.fillText(`• Assoalho: Réguas de Madeira (7cm x 2cm) com Frestas de 2cm | Total: ${countPlanks} Réguas Transversais`, 30, 85);
+            ctx.fillText(`• Vigas do Cintamento: Seção Retangular de Concreto Armado 20cm x 28cm`, 30, 105);
         }
 
         function copiarTabelaWhatsApp() {
@@ -570,6 +613,7 @@
                 devY1: document.getElementById('devY1').value,
                 hasStair: document.getElementById('hasStair').checked,
                 stairY: document.getElementById('stairY').value,
+                dev2: document.getElementById('dev2').value,
                 dev4: document.getElementById('dev4').value,
                 dev6: document.getElementById('dev6').value,
                 dev8: document.getElementById('dev8').value,
@@ -607,6 +651,7 @@
                 if(data.devY1) document.getElementById('devY1').value = data.devY1;
                 if(data.hasStair !== undefined) document.getElementById('hasStair').checked = data.hasStair;
                 if(data.stairY) document.getElementById('stairY').value = data.stairY;
+                if(data.dev2) document.getElementById('dev2').value = data.dev2;
                 if(data.dev4) document.getElementById('dev4').value = data.dev4;
                 if(data.dev6) document.getElementById('dev6').value = data.dev6;
                 if(data.dev8) document.getElementById('dev8').value = data.dev8;
